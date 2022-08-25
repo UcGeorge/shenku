@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../config/config.dart';
@@ -25,7 +26,9 @@ class StorageCubit extends Cubit<StorageState> {
   void initializeDirectory(
       {required void Function(bool, String?) onComplete}) async {
     _log.info('Initializing storage');
-    final directory = File(appDir);
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+
+    final directory = Directory(appDir(appDocDir.path));
     try {
       //* Create App directory if it does not exist
       if (!await directory.exists()) {
@@ -33,7 +36,7 @@ class StorageCubit extends Cubit<StorageState> {
         await directory.create(recursive: true);
       }
 
-      final dataFile = File(dataFileDir);
+      final dataFile = File(dataFileDir(appDocDir.path));
       if (!await dataFile.exists()) {
         _log.info('Creating app data file');
         await dataFile.create(recursive: true);
@@ -51,13 +54,14 @@ class StorageCubit extends Cubit<StorageState> {
     } on Exception catch (ex) {
       _log.severe(ex);
       onComplete(false, ex.toString());
-      debugPrint('initializeDirectory exception: $ex');
+      // debugPrint(ex.toString());
     }
   }
 
   void saveData() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
     _log.info('Writing to app data file');
-    final dataFile = File(dataFileDir);
+    final dataFile = File(dataFileDir(appDocDir.path));
     await dataFile.writeAsString(
       state.appData.toJson(),
       mode: FileMode.write,

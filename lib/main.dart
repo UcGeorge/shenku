@@ -1,12 +1,24 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 import 'constants/constants.dart';
 import 'logic/cubit/storage_cubit.dart';
 import 'view/pages/entry.dart';
 
 void main() {
+  if (kReleaseMode) {
+    // Don't log anything below warnings in production.
+    Logger.root.level = Level.WARNING;
+  }
+  Logger.root.onRecord.listen((record) {
+    debugPrint('${record.level.name} : ${record.time} : '
+        '${record.loggerName} : '
+        '${record.message}');
+  });
+
   runApp(ShenKu(
     storageCubit: StorageCubit(),
   ));
