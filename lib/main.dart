@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:shenku/logic/cubit/navigator_cubit.dart';
 
 import 'constants/constants.dart';
 import 'logic/cubit/storage_cubit.dart';
-import 'view/pages/entry.dart';
 
 void main() {
   if (kReleaseMode) {
@@ -21,6 +21,7 @@ void main() {
 
   runApp(ShenKu(
     storageCubit: StorageCubit(),
+    navigatorCubit: NavigatorCubit(),
   ));
 
   doWhenWindowReady(() {
@@ -31,20 +32,33 @@ void main() {
 }
 
 class ShenKu extends StatelessWidget {
-  const ShenKu({Key? key, required this.storageCubit}) : super(key: key);
+  const ShenKu(
+      {Key? key, required this.storageCubit, required this.navigatorCubit})
+      : super(key: key);
 
+  final String initialRoute = "init";
   final StorageCubit storageCubit;
+  final NavigatorCubit navigatorCubit;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ShenKu',
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
-      darkTheme: kDarkThemeData,
-      home: BlocProvider(
-        create: (context) => storageCubit,
-        child: const EntryPoint(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => storageCubit,
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => navigatorCubit,
+        ),
+      ],
+      child: MaterialApp(
+        title: 'ShenKu',
+        debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.dark,
+        darkTheme: kDarkThemeData,
+        onGenerateRoute: NavigatorCubit.onGenerateRoute,
+        initialRoute: initialRoute,
       ),
     );
   }
