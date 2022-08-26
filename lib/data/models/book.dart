@@ -87,6 +87,39 @@ class Book {
         return BookStatus.completed;
     }
   }
+
+  @override
+  String toString() {
+    return 'Book(name: $name, source: $source, type: $type)';
+  }
+
+  Book copyWith({
+    int? chapterCount,
+    List<Chapter>? chapters,
+    ShenImage? coverPicture,
+    String? description,
+    String? id,
+    String? link,
+    String? name,
+    String? rating,
+    String? source,
+    BookStatus? status,
+    BookType? type,
+  }) {
+    return Book(
+      chapterCount: chapterCount ?? this.chapterCount,
+      chapters: chapters ?? this.chapters,
+      coverPicture: coverPicture ?? this.coverPicture,
+      description: description ?? this.description,
+      id: id ?? this.id,
+      link: link ?? this.link,
+      name: name ?? this.name,
+      rating: rating ?? this.rating,
+      source: source ?? this.source,
+      status: status ?? this.status,
+      type: type ?? this.type,
+    );
+  }
 }
 
 enum BookType { novel, manga }
