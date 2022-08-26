@@ -6,14 +6,15 @@ import 'package:logging/logging.dart';
 
 import '../../view/pages/alertView.dart';
 import '../../view/pages/entry.dart';
+import '../../view/pages/shen_scaffold.dart';
 import '../classes/alert.dart';
 
 part 'navigator_state.dart';
 
 final _log = Logger('navigation_cubit');
 
-class NavigatorCubit extends Cubit<NavigatorState> {
-  NavigatorCubit() : super(NavigatorState.init());
+class NavigationCubit extends Cubit<NavigatonState> {
+  NavigationCubit() : super(NavigatonState.init());
 
   void showAlert(BuildContext context, Alert alert) {
     Navigator.of(context).pushNamed('alert', arguments: alert);
@@ -21,6 +22,11 @@ class NavigatorCubit extends Cubit<NavigatorState> {
 
   void showActionSheet(BuildContext context, {required Widget actionSheet}) {
     Navigator.of(context).pushNamed('action', arguments: actionSheet);
+  }
+
+  void goToShenScaffold(BuildContext context) {
+    Navigator.of(context)
+        .pushNamed('scaffold', arguments: const ShenScaffold());
   }
 
   void pop(BuildContext context) {
@@ -37,6 +43,8 @@ class NavigatorCubit extends Cubit<NavigatorState> {
         return _alertRoute(settings.arguments as Alert);
       case 'action':
         return _actionSheetRoute(settings.arguments as Widget);
+      case 'scaffold':
+        return _shenScaffoldRoute(settings.arguments as ShenScaffold);
       default:
         return _initRoute();
     }
@@ -103,8 +111,36 @@ class NavigatorCubit extends Cubit<NavigatorState> {
       },
     );
   }
+
+  static Route _shenScaffoldRoute(ShenScaffold scaffold) {
+    return PageRouteBuilder(
+      barrierColor: Colors.black.withOpacity(.5),
+      opaque: false,
+      pageBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+      ) =>
+          scaffold,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = 0.0;
+        const end = 1.0;
+        const curve = Curves.ease;
+
+        Animatable<double> tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+
+        return FadeTransition(
+          opacity: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
 }
 
 extension Navigation on BuildContext {
-  NavigatorCubit get navigator => read<NavigatorCubit>();
+  NavigationCubit get navigator => read<NavigationCubit>();
 }

@@ -21,7 +21,7 @@ void main() {
 
   runApp(ShenKu(
     storageCubit: StorageCubit(),
-    navigatorCubit: NavigatorCubit(),
+    navigatorCubit: NavigationCubit(),
   ));
 
   doWhenWindowReady(() {
@@ -38,7 +38,7 @@ class ShenKu extends StatelessWidget {
 
   final String initialRoute = "init";
   final StorageCubit storageCubit;
-  final NavigatorCubit navigatorCubit;
+  final NavigationCubit navigatorCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class ShenKu extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.dark,
         darkTheme: kDarkThemeData,
-        onGenerateRoute: NavigatorCubit.onGenerateRoute,
+        onGenerateRoute: NavigationCubit.onGenerateRoute,
         initialRoute: initialRoute,
       ),
     );

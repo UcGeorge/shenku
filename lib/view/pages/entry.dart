@@ -1,9 +1,11 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+
 import '../../constants/color.dart';
 import '../../logic/classes/alert.dart';
-
+import '../../logic/cubit/navigator_cubit.dart';
 import '../../logic/cubit/storage_cubit.dart';
+import '../../logic/services/general.dart';
 import '../widgets/init_page/logo.dart';
 
 class EntryPoint extends StatefulWidget {
@@ -23,6 +25,7 @@ class _EntryPointState extends State<EntryPoint> {
 
   void onInitComplete(bool success, String? error) {
     if (success) {
+      context.navigator.goToShenScaffold(context);
     } else {
       context.showError(error!);
     }
@@ -36,7 +39,10 @@ class _EntryPointState extends State<EntryPoint> {
         children: [
           Center(
             child: GestureDetector(
-              onDoubleTap: () => context.testAlert(),
+              onDoubleTap: () {
+                context.testAlert();
+                debugPrint("Tap Event");
+              },
               child: const CelterLogo(),
             ),
           ),
@@ -63,10 +69,7 @@ class _EntryPointState extends State<EntryPoint> {
                     FlickerAnimatedText('Shen-Ku'),
                     FlickerAnimatedText('Loading...'),
                   ],
-                  onTap: () {
-                    // context.showSuccess("Tap Event");
-                    debugPrint("Tap Event");
-                  },
+                  onTap: doNothing,
                 ),
               ),
             ),

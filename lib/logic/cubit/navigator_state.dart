@@ -1,8 +1,9 @@
 part of 'navigator_cubit.dart';
 
-class NavigatorState extends Equatable {
-  const NavigatorState();
-  factory NavigatorState.init() => const NavigatorState();
+class NavigatonState extends Equatable {
+  const NavigatonState();
+
+  factory NavigatonState.init() => const NavigatonState();
 
   @override
   List<Object> get props => [];
