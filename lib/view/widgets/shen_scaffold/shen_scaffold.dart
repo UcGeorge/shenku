@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shenku/view/widgets/shen_scaffold/drawer.dart';
+
+import '../../../constants/color.dart';
+import 'drawer.dart';
 
 class ShenScaffold extends StatelessWidget {
   const ShenScaffold({Key? key, required this.body}) : super(key: key);
@@ -9,9 +11,10 @@ class ShenScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: dark,
       child: Row(
         children: [
-          Hero(
+          const Hero(
             tag: 'app-drawer',
             child: AppDrawer(),
           ),
