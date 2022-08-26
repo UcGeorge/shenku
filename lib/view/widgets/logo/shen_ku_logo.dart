@@ -22,7 +22,7 @@ class ShenKuLogo extends StatelessWidget {
         radius: innerRadius(height),
         backgroundColor: thisWhite,
         child: SvgPicture.asset(
-          logoText,
+          logoTextSvg,
           color: dark,
           height: logoHeight(height),
         ),
