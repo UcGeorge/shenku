@@ -6,7 +6,9 @@ import 'package:logging/logging.dart';
 
 import '../../view/pages/alertView.dart';
 import '../../view/pages/entry.dart';
-import '../../view/pages/shen_scaffold.dart';
+import '../../view/pages/explore.dart';
+import '../../view/pages/home.dart';
+import '../../view/pages/library.dart';
 import '../classes/alert.dart';
 
 part 'navigator_state.dart';
@@ -16,6 +18,12 @@ final _log = Logger('navigation_cubit');
 class NavigationCubit extends Cubit<NavigatonState> {
   NavigationCubit() : super(NavigatonState.init());
 
+  @override
+  void emit(NavigatonState state) {
+    _log.info(state);
+    super.emit(state);
+  }
+
   void showAlert(BuildContext context, Alert alert) {
     Navigator.of(context).pushNamed('alert', arguments: alert);
   }
@@ -24,9 +32,40 @@ class NavigationCubit extends Cubit<NavigatonState> {
     Navigator.of(context).pushNamed('action', arguments: actionSheet);
   }
 
-  void goToShenScaffold(BuildContext context) {
-    Navigator.of(context)
-        .pushNamed('scaffold', arguments: const ShenScaffold());
+  void goToHome(BuildContext context) {
+    emit(
+      state.pushRoute(
+        'Home',
+        () => Navigator.of(context).pushNamed(
+          'scaffold',
+          arguments: const HomePage(),
+        ),
+      ),
+    );
+  }
+
+  void goToExplore(BuildContext context) {
+    emit(
+      state.pushRoute(
+        'Explore',
+        () => Navigator.of(context).pushNamed(
+          'scaffold',
+          arguments: const ExplorePage(),
+        ),
+      ),
+    );
+  }
+
+  void goToLibrary(BuildContext context) {
+    emit(
+      state.pushRoute(
+        'Library',
+        () => Navigator.of(context).pushNamed(
+          'scaffold',
+          arguments: const LibraryPage(),
+        ),
+      ),
+    );
   }
 
   void pop(BuildContext context) {
@@ -44,7 +83,7 @@ class NavigationCubit extends Cubit<NavigatonState> {
       case 'action':
         return _actionSheetRoute(settings.arguments as Widget);
       case 'scaffold':
-        return _shenScaffoldRoute(settings.arguments as ShenScaffold);
+        return _shenScaffoldRoute(settings.arguments as Widget);
       default:
         return _initRoute();
     }
@@ -112,7 +151,7 @@ class NavigationCubit extends Cubit<NavigatonState> {
     );
   }
 
-  static Route _shenScaffoldRoute(ShenScaffold scaffold) {
+  static Route _shenScaffoldRoute(Widget scaffold) {
     return PageRouteBuilder(
       barrierColor: Colors.black.withOpacity(.5),
       opaque: false,

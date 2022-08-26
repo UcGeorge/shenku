@@ -33,63 +33,34 @@ class AppDrawerTile extends StatelessWidget {
       onEnter: (e) => setHoverState(title),
       onExit: (e) => setHoverState('null'),
       child: GestureDetector(
-        // onTap: () {
-        //   if (selected != "Home") {
-        //     context.read<SelectedMenu>().select("Home");
-        //   }
-        // },
         onTap: onTap,
-        child: AnimatedCrossFade(
-          duration: const Duration(milliseconds: 100),
-          firstChild: SizedBox(
-            height: 36,
-            width: double.infinity,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  width: 24,
-                ),
-                SvgPicture.asset(selected ? selectedIconPath : iconPath),
-                const SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  title,
-                  style: nunito.copyWith(
-                    fontSize: 18,
-                    color: selected || hovered ? white : lessWhite,
+        child: Container(
+          color: Colors.transparent,
+          child: AnimatedCrossFade(
+            duration: const Duration(milliseconds: 100),
+            firstChild: SizedBox(
+              height: 36,
+              width: double.infinity,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    width: 24,
                   ),
-                ),
-                const Spacer(),
-                if (selected)
-                  Container(
-                    height: 36,
-                    width: 8,
-                    decoration: const BoxDecoration(
-                      color: violet,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(6),
-                        bottomLeft: Radius.circular(6),
-                      ),
+                  SvgPicture.asset(selected ? selectedIconPath : iconPath),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    title,
+                    style: nunito.copyWith(
+                      fontSize: 18,
+                      color: selected || hovered ? white : lessWhite,
                     ),
                   ),
-              ],
-            ),
-          ),
-          secondChild: SizedBox(
-            height: 36,
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child:
-                      SvgPicture.asset(selected ? selectedIconPath : iconPath),
-                ),
-                if (selected)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
+                  const Spacer(),
+                  if (selected)
+                    Container(
                       height: 36,
                       width: 8,
                       decoration: const BoxDecoration(
@@ -100,12 +71,39 @@ class AppDrawerTile extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
+            secondChild: SizedBox(
+              height: 36,
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                        selected ? selectedIconPath : iconPath),
+                  ),
+                  if (selected)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        height: 36,
+                        width: 8,
+                        decoration: const BoxDecoration(
+                          color: violet,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            bottomLeft: Radius.circular(6),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            crossFadeState:
+                expanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
           ),
-          crossFadeState:
-              expanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
         ),
       ),
     );

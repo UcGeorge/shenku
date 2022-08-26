@@ -25,7 +25,7 @@ class _EntryPointState extends State<EntryPoint> {
 
   void onInitComplete(bool success, String? error) {
     if (success) {
-      context.navigator.goToShenScaffold(context);
+      context.navigator.goToHome(context);
     } else {
       context.showError(error!);
     }
