@@ -54,7 +54,6 @@ class StorageCubit extends Cubit<StorageState> {
     } on Exception catch (ex) {
       _log.severe(ex);
       onComplete(false, ex.toString());
-      // debugPrint(ex.toString());
     }
   }
 
