@@ -29,6 +29,8 @@ void main() {
     var initialSize = const Size(700, 516);
     appWindow.minSize = initialSize;
     appWindow.title = 'ShenKu';
+    appWindow.alignment = Alignment.center;
+    appWindow.show();
   });
 }
 

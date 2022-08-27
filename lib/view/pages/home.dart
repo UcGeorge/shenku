@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shenku/data/sources/source.dart';
 import 'package:shenku/view/widgets/book_section/book_section.dart';
 
-import '../../constants/color.dart';
 import '../../logic/cubit/homepage_cubit.dart';
 import '../widgets/shen_scaffold/shen_scaffold.dart';
 import '../widgets/smooth_scroll/smooth_scroll.dart';
@@ -27,44 +26,37 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return ShenScaffold(
-      body: Container(
-        padding: const EdgeInsets.all(50),
-        decoration: BoxDecoration(
-          color: thisWhite.withOpacity(.3),
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(50)),
-        ),
-        child: BlocBuilder<HomepageCubit, HomepageState>(
-          builder: (context, state) {
-            final bookSectionTitles = state.sourcesHomepage.keys.toList();
-            final bookSectionBooks = state.sourcesHomepage.values.toList();
+      body: BlocBuilder<HomepageCubit, HomepageState>(
+        builder: (context, state) {
+          final bookSectionTitles = state.sourcesHomepage.keys.toList();
+          final bookSectionBooks = state.sourcesHomepage.values.toList();
 
-            List bookSections = [];
+          List bookSections = [];
 
-            bookSectionTitles.iterate(
-              (element, index) {
-                bookSections.add(BookSection(
-                  books: bookSectionBooks[index],
-                  title: element,
-                ));
-              },
-            );
+          bookSectionTitles.iterate(
+            (element, index) {
+              bookSections.add(BookSection(
+                books: bookSectionBooks[index],
+                title: element,
+              ));
+            },
+          );
 
-            return SmoothScrollView(
+          return SmoothScrollView(
+            controller: controller,
+            child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
               controller: controller,
-              child: ListView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: controller,
-                children: [
-                  BookSection(
-                    title: 'Library',
-                    books: state.library,
-                  ),
-                  ...bookSections,
-                ],
-              ),
-            );
-          },
-        ),
+              children: [
+                BookSection(
+                  title: 'Library',
+                  books: state.library,
+                ),
+                ...bookSections,
+              ],
+            ),
+          );
+        },
       ),
     );
   }
