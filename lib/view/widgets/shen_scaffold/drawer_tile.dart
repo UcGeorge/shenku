@@ -62,7 +62,7 @@ class AppDrawerTile extends StatelessWidget {
                   if (selected)
                     Container(
                       height: 36,
-                      width: 8,
+                      width: 6,
                       decoration: const BoxDecoration(
                         color: violet,
                         borderRadius: BorderRadius.only(
@@ -88,7 +88,7 @@ class AppDrawerTile extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: Container(
                         height: 36,
-                        width: 8,
+                        width: 6,
                         decoration: const BoxDecoration(
                           color: violet,
                           borderRadius: BorderRadius.only(

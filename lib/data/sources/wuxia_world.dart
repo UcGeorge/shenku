@@ -1,28 +1,30 @@
-import 'package:shenku/data/models/chapter.dart';
-import 'package:shenku/data/models/book.dart';
-import 'package:shenku/data/sources/source.dart';
+import '../models/book.dart';
+import '../models/chapter.dart';
+import 'source.dart';
 
-class WuxiaWorld implements BookSource {
+class WuxiaWorld extends BookSource {
+  WuxiaWorld() : super('Wuxia World');
+
   @override
-  Chapter getBookChapterDetails(String chapterSource) {
+  Future<Chapter> getBookChapterDetails(String chapterSource) async {
     // TODO: implement getBookChapterDetails
     throw UnimplementedError();
   }
 
   @override
-  Book getBookDetails(String bookSource) {
+  Future<Book> getBookDetails(String bookSource) async {
     // TODO: implement getBookDetails
     throw UnimplementedError();
   }
 
   @override
-  List<Book> getHomePage() {
-    // TODO: implement getHomePage
-    throw UnimplementedError();
+  Future<List<Book>> getHomePage() async {
+    await Future.delayed(const Duration(seconds: 5));
+    return [];
   }
 
   @override
-  List<Book> search(String term) {
+  Future<List<Book>> search(String term) async {
     // TODO: implement search
     throw UnimplementedError();
   }

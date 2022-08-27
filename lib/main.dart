@@ -3,9 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
-import 'package:shenku/logic/cubit/navigator_cubit.dart';
 
 import 'constants/constants.dart';
+import 'logic/cubit/homepage_cubit.dart';
+import 'logic/cubit/navigator_cubit.dart';
 import 'logic/cubit/storage_cubit.dart';
 
 void main() {
@@ -32,13 +33,17 @@ void main() {
 }
 
 class ShenKu extends StatelessWidget {
-  const ShenKu(
-      {Key? key, required this.storageCubit, required this.navigatorCubit})
-      : super(key: key);
+  ShenKu({
+    Key? key,
+    required this.storageCubit,
+    required this.navigatorCubit,
+  })  : homepageCubit = HomepageCubit(storageCubit),
+        super(key: key);
 
+  final HomepageCubit homepageCubit;
   final String initialRoute = "init";
-  final StorageCubit storageCubit;
   final NavigationCubit navigatorCubit;
+  final StorageCubit storageCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +55,10 @@ class ShenKu extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => navigatorCubit,
+        ),
+        BlocProvider(
+          create: (context) => homepageCubit,
+          lazy: false,
         ),
       ],
       child: MaterialApp(

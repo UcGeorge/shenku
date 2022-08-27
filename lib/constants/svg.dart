@@ -6,3 +6,4 @@ const String searchSvg = 'assets/svg/Search.svg';
 const String searchBoldSvg = 'assets/svg/Search_bold.svg';
 const String bookmarkSvg = 'assets/svg/Bookmark.svg';
 const String bookmarkBoldSvg = 'assets/svg/Bookmark_bold.svg';
+const String threeDotsLoadingLottie = 'assets/lottie/3-dots-loading.json';
