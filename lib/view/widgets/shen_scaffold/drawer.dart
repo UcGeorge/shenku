@@ -93,7 +93,6 @@ class _AppDrawerState extends State<AppDrawer> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 24),
                   _buildLogo(),
                   _buildDivider(),
                   Center(
