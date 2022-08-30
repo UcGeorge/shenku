@@ -34,7 +34,8 @@ class _ShenNavButtonState extends State<ShenNavButton> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: SystemMouseCursors.click,
+      cursor:
+          !widget.enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
       onEnter: _toogleHover,
       onExit: _toogleHover,
       child: RotatedBox(
