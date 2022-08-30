@@ -59,6 +59,7 @@ class ShenScaffold extends StatelessWidget {
     return WindowTitleBarBox(
       child: Row(
         children: [
+          SizedBox(width: 90, child: MoveWindow()),
           Expanded(child: MoveWindow()),
           const ShenAppBar(),
           Expanded(child: MoveWindow()),

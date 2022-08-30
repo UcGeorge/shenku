@@ -7,7 +7,7 @@ import '../../../constants/color.dart';
 import '../../../constants/fonts.dart';
 import '../../../logic/cubit/navigator_cubit.dart';
 import '../../../logic/services/general.dart';
-import 'nav_buttons.dart';
+import 'app_bar/nav_buttons.dart';
 
 class ShenAppBar extends StatefulWidget {
   const ShenAppBar({Key? key}) : super(key: key);
@@ -54,7 +54,7 @@ class _ShenAppBarState extends State<ShenAppBar> {
               : screenSize(context).width / 3,
           child: Container(
             margin: const EdgeInsets.all(4),
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
             decoration: BoxDecoration(
               color: blueGrey.withOpacity(.15),
               borderRadius: BorderRadius.circular(6),
