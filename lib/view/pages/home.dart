@@ -8,7 +8,11 @@ import '../widgets/shen_scaffold/shen_scaffold.dart';
 import '../widgets/smooth_scroll/smooth_scroll.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({
+    Key? key,
+    this.startExpanded,
+  }) : super(key: key);
+  final bool? startExpanded;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -26,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return ShenScaffold(
+      startExpanded: widget.startExpanded,
       body: BlocBuilder<HomepageCubit, HomepageState>(
         builder: (context, state) {
           final bookSectionTitles = state.sourcesHomepage.keys.toList();

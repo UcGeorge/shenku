@@ -32,44 +32,70 @@ class NavigationCubit extends Cubit<NavigatonState> {
     Navigator.of(context).pushNamed('action', arguments: actionSheet);
   }
 
-  void goToHome(BuildContext context) {
+  void goToHome(BuildContext context, [bool startExpanded = false]) {
     emit(
-      state.pushRoute(
-        'Home',
-        () => Navigator.of(context).pushNamed(
+      state.goFoward(
+        route: 'Home',
+        callback: (_) => Navigator.of(context).pushNamed(
           'scaffold',
-          arguments: const HomePage(),
+          arguments: HomePage(startExpanded: startExpanded),
         ),
       ),
     );
   }
 
-  void goToExplore(BuildContext context) {
+  void goToExplore(BuildContext context, [bool startExpanded = false]) {
     emit(
-      state.pushRoute(
-        'Explore',
-        () => Navigator.of(context).pushNamed(
+      state.goFoward(
+        route: 'Explore',
+        callback: (_) => Navigator.of(context).pushNamed(
           'scaffold',
-          arguments: const ExplorePage(),
+          arguments: ExplorePage(startExpanded: startExpanded),
         ),
       ),
     );
   }
 
-  void goToLibrary(BuildContext context) {
+  void goToLibrary(BuildContext context, [bool startExpanded = false]) {
     emit(
-      state.pushRoute(
-        'Library',
-        () => Navigator.of(context).pushNamed(
+      state.goFoward(
+        route: 'Library',
+        callback: (_) => Navigator.of(context).pushNamed(
           'scaffold',
-          arguments: const LibraryPage(),
+          arguments: LibraryPage(startExpanded: startExpanded),
         ),
       ),
     );
   }
 
-  void pop(BuildContext context) {
-    Navigator.pop(context);
+  void goFoward(BuildContext context) {
+    emit(state.goFoward(
+      callback: (route) {
+        switch (route) {
+          case 'Home':
+            Navigator.of(context).pushNamed(
+              'scaffold',
+              arguments: const HomePage(),
+            );
+            break;
+          case 'Explore':
+            Navigator.of(context).pushNamed(
+              'scaffold',
+              arguments: const ExplorePage(),
+            );
+            break;
+          case 'Library':
+            Navigator.of(context).pushNamed(
+              'scaffold',
+              arguments: const LibraryPage(),
+            );
+        }
+      },
+    ));
+  }
+
+  void goBackward(BuildContext context) {
+    emit(state.goBackward(() => Navigator.pop(context)));
   }
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {

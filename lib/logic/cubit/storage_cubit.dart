@@ -57,6 +57,11 @@ class StorageCubit extends Cubit<StorageState> {
     }
   }
 
+  void modifyAppData(AppData appData) {
+    emit(state.copyWith(appData: appData));
+    saveData();
+  }
+
   void saveData() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     _log.info('Writing to app data file');

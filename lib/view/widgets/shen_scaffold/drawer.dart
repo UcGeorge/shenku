@@ -9,20 +9,28 @@ import '../logo/shen_ku_logo.dart';
 import 'drawer_tile.dart';
 
 class AppDrawer extends StatefulWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+  const AppDrawer({Key? key, this.startExpanded}) : super(key: key);
+
+  final bool? startExpanded;
 
   @override
   State<AppDrawer> createState() => _AppDrawerState();
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  bool expanded = true;
+  late bool expanded;
   String hovered = 'null';
 
   void _setHovered(String hover) {
     setState(() {
       hovered = hover;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    expanded = widget.startExpanded ?? false;
   }
 
   AnimatedCrossFade _buildLogo() {
@@ -92,7 +100,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     child: AppDrawerTile(
                       title: "Home",
                       expanded: expanded,
-                      onTap: () => context.navigator.goToHome(context),
+                      onTap: () => context.navigator.goToHome(context, true),
                       selected: state.route == 'Home',
                       hovered: hovered == "Home",
                       setHoverState: (value) => _setHovered(value),
@@ -105,7 +113,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     child: AppDrawerTile(
                       title: "Explore",
                       expanded: expanded,
-                      onTap: () => context.navigator.goToExplore(context),
+                      onTap: () => context.navigator.goToExplore(context, true),
                       selected: state.route == 'Explore',
                       hovered: hovered == "Explore",
                       setHoverState: (value) => _setHovered(value),
@@ -118,7 +126,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     child: AppDrawerTile(
                       title: "Library",
                       expanded: expanded,
-                      onTap: () => context.navigator.goToLibrary(context),
+                      onTap: () => context.navigator.goToLibrary(context, true),
                       selected: state.route == 'Library',
                       hovered: hovered == "Library",
                       setHoverState: (value) => _setHovered(value),

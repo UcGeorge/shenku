@@ -1,15 +1,18 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:shenku/logic/services/general.dart';
-import 'package:shenku/view/widgets/shen_scaffold/window_buttons.dart';
 
 import '../../../constants/color.dart';
+import '../../../logic/services/general.dart';
 import 'drawer.dart';
+import 'app_bar.dart';
+import 'window_buttons.dart';
 
 class ShenScaffold extends StatelessWidget {
-  const ShenScaffold({Key? key, required this.body}) : super(key: key);
+  const ShenScaffold({Key? key, required this.body, this.startExpanded})
+      : super(key: key);
 
   final Widget body;
+  final bool? startExpanded;
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +28,12 @@ class ShenScaffold extends StatelessWidget {
                   Column(
                     children: [
                       WindowTitleBarBox(child: MoveWindow()),
-                      const Expanded(
+                      Expanded(
                         child: Hero(
                           tag: 'app-drawer',
-                          child: AppDrawer(),
+                          child: AppDrawer(
+                            startExpanded: startExpanded,
+                          ),
                         ),
                       ),
                     ],
@@ -39,6 +44,8 @@ class ShenScaffold extends StatelessWidget {
                         WindowTitleBarBox(
                           child: Row(
                             children: [
+                              Expanded(child: MoveWindow()),
+                              const ShenAppBar(),
                               Expanded(child: MoveWindow()),
                               const WindowButtons()
                             ],

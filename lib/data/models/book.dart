@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 import 'chapter.dart';
 import 'shen_image.dart';
 
-class Book {
-  Book({
+class Book extends Equatable {
+  const Book({
     required this.id,
     required this.name,
     required this.type,
@@ -120,6 +122,9 @@ class Book {
       type: type ?? this.type,
     );
   }
+
+  @override
+  List<Object> get props => [id];
 }
 
 enum BookType { novel, manga }

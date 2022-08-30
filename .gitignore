@@ -10,6 +10,7 @@
 .svn/
 migrate_working_dir/
 assets/design-files/*
+Shen-Ku/*
 
 # IntelliJ related
 *.iml

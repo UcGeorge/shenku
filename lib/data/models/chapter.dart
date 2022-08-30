@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 import 'shen_image.dart';
 
-class Chapter {
-  Chapter({
+class Chapter extends Equatable {
+  const Chapter({
     required this.id,
     required this.name,
     required this.link,
@@ -51,6 +53,9 @@ class Chapter {
       source == 'network' ? ChapterSource.network : ChapterSource.file;
 
   String toJson() => json.encode(toMap());
+
+  @override
+  List<Object> get props => [id];
 }
 
 enum ChapterSource { network, file }
