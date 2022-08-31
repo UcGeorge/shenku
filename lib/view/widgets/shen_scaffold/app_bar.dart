@@ -64,7 +64,7 @@ class _ShenAppBarState extends State<ShenAppBar> {
                 NavButtons(state: state),
                 const Spacer(),
                 Text(
-                  state.route,
+                  state.isStateless ? state.statelessRoute! : state.route,
                   style: nunito.copyWith(
                     color: white,
                   ),

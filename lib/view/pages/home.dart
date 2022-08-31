@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shenku/data/sources/source.dart';
+import 'package:shenku/logic/cubit/navigator_cubit.dart';
 import 'package:shenku/view/widgets/book_section/book_section.dart';
 
 import '../../logic/cubit/homepage_cubit.dart';
@@ -56,6 +57,8 @@ class _HomePageState extends State<HomePage> {
                 BookSection(
                   title: 'Library',
                   books: state.library,
+                  overrideSeeAll: () =>
+                      context.navigator.goToLibrary(context, false),
                 ),
                 ...bookSections,
               ],

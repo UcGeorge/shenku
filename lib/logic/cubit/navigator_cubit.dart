@@ -24,6 +24,14 @@ class NavigationCubit extends Cubit<NavigatonState> {
     super.emit(state);
   }
 
+  void clearStateless(BuildContext context) {
+    if (state.isStateless) {
+      _log.warning('Clearing stateless');
+      Navigator.pop(context);
+      emit(state._copyWith(statelessRoute: null));
+    }
+  }
+
   void showAlert(BuildContext context, Alert alert) {
     Navigator.of(context).pushNamed('alert', arguments: alert);
   }
@@ -33,6 +41,7 @@ class NavigationCubit extends Cubit<NavigatonState> {
   }
 
   void goToHome(BuildContext context, [bool startExpanded = false]) {
+    clearStateless(context);
     emit(
       state.goFoward(
         route: 'Home',
@@ -45,6 +54,7 @@ class NavigationCubit extends Cubit<NavigatonState> {
   }
 
   void goToExplore(BuildContext context, [bool startExpanded = false]) {
+    clearStateless(context);
     emit(
       state.goFoward(
         route: 'Explore',
@@ -57,6 +67,7 @@ class NavigationCubit extends Cubit<NavigatonState> {
   }
 
   void goToLibrary(BuildContext context, [bool startExpanded = false]) {
+    clearStateless(context);
     emit(
       state.goFoward(
         route: 'Library',
@@ -69,6 +80,7 @@ class NavigationCubit extends Cubit<NavigatonState> {
   }
 
   void goFoward(BuildContext context) {
+    clearStateless(context);
     emit(state.goFoward(
       callback: (route) {
         switch (route) {
@@ -95,7 +107,22 @@ class NavigationCubit extends Cubit<NavigatonState> {
   }
 
   void goBackward(BuildContext context) {
+    clearStateless(context);
     emit(state.goBackward(() => Navigator.pop(context)));
+  }
+
+  void goForwardWithoutState(BuildContext context, Widget child, String route) {
+    Navigator.of(context).pushNamed(
+      'scaffold',
+      arguments: child,
+    );
+
+    emit(state._copyWith(statelessRoute: route));
+  }
+
+  void goBackwardWithoutState(BuildContext context) {
+    Navigator.pop(context);
+    emit(state._copyWith(statelessRoute: null));
   }
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {

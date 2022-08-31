@@ -1,23 +1,29 @@
 part of 'navigator_cubit.dart';
 
 class NavigatonState extends Equatable {
-  NavigatonState(
-      {required this.route, List<String>? routeStack, List<String>? pushStack})
-      : routeStack = routeStack ?? [],
+  NavigatonState({
+    this.statelessRoute,
+    required this.route,
+    List<String>? routeStack,
+    List<String>? pushStack,
+  })  : routeStack = routeStack ?? [],
         pushStack = pushStack ?? [];
 
   factory NavigatonState.init() => NavigatonState(route: 'init');
 
   final String route;
+  final String? statelessRoute;
   final List<String> routeStack;
   final List<String> pushStack;
 
+  bool get isStateless => statelessRoute != null;
+
   @override
-  List<Object> get props => [route];
+  List<Object> get props => [route, statelessRoute ?? ''];
 
   @override
   String toString() {
-    return "RouteStack: ${routeStack.toString()} PushStack: ${pushStack.toString()}";
+    return "RouteStack: ${routeStack.toString()} | PushStack: ${pushStack.toString()} | Route: $route | StatelessRoute: $statelessRoute |";
   }
 
   NavigatonState goFoward({String? route, required Function(String) callback}) {
@@ -62,11 +68,13 @@ class NavigatonState extends Equatable {
 
   NavigatonState _copyWith({
     String? route,
+    String? statelessRoute,
     List<String>? routeStack,
     List<String>? pushStack,
   }) {
     return NavigatonState(
       route: route ?? this.route,
+      statelessRoute: statelessRoute,
       routeStack: routeStack ?? this.routeStack,
       pushStack: pushStack ?? this.pushStack,
     );

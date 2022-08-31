@@ -5,17 +5,21 @@ import 'package:shenku/constants/fonts.dart';
 import '../../../data/models/book.dart';
 import '../../../logic/services/general.dart';
 import 'book_tile.dart';
-import 'read_more.dart';
+import 'see_all.dart';
 
 class BookSection extends StatelessWidget {
   const BookSection({
     Key? key,
     required this.books,
     required this.title,
+    this.cap = 10,
+    this.overrideSeeAll,
   }) : super(key: key);
 
+  final VoidCallback? overrideSeeAll;
   final List<Book>? books;
   final String title;
+  final int cap;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -43,8 +47,13 @@ class BookSection extends StatelessWidget {
             ),
           ),
         const Spacer(),
-        (books?.length ?? 0) > 10
-            ? const SeeMoreButton(seeMore: doNothing)
+        (books?.length ?? 0) > cap
+            ? SeeMoreButton(
+                seeMore: doNothing,
+                books: books ?? [],
+                title: title,
+                overrideSeeAll: overrideSeeAll,
+              )
             : const SizedBox.shrink(),
       ],
     );
@@ -80,9 +89,9 @@ class BookSection extends StatelessWidget {
                             children: [
                               for (int i = 0;
                                   i <
-                                      ((books!.length) <= 10
+                                      ((books!.length) <= cap
                                           ? (books!.length)
-                                          : 10);
+                                          : cap);
                                   i++)
                                 _buildNovels(context, i)
                             ],

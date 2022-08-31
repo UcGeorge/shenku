@@ -17,14 +17,16 @@ class NavButtons extends StatelessWidget {
       children: [
         ShenNavButton(
           state: state,
-          enabled: state.routeStack.length <= 1,
-          onTap: () => context.navigator.goBackward(context),
+          enabled: state.routeStack.length > 1 || state.isStateless,
+          onTap: () => state.isStateless
+              ? context.navigator.goBackwardWithoutState(context)
+              : context.navigator.goBackward(context),
         ),
         const SizedBox(width: 4),
         ShenNavButton(
           state: state,
           quarterTurns: 2,
-          enabled: state.pushStack.isEmpty,
+          enabled: state.pushStack.isNotEmpty && !state.isStateless,
           onTap: () => context.navigator.goFoward(context),
         )
       ],

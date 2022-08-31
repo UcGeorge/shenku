@@ -35,25 +35,25 @@ class _ShenNavButtonState extends State<ShenNavButton> {
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor:
-          !widget.enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+          widget.enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
       onEnter: _toogleHover,
       onExit: _toogleHover,
       child: RotatedBox(
         quarterTurns: widget.quarterTurns ?? 0,
         child: GestureDetector(
-          onTap: widget.enabled ? doNothing : widget.onTap,
+          onTap: widget.enabled ? widget.onTap : doNothing,
           child: Container(
             padding: const EdgeInsets.all(1),
             margin: const EdgeInsets.symmetric(vertical: .5),
             decoration: BoxDecoration(
               color:
-                  isHovering && !widget.enabled ? white.withOpacity(.15) : null,
+                  isHovering && widget.enabled ? white.withOpacity(.15) : null,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(
               Icons.keyboard_backspace_rounded,
               size: 16,
-              color: widget.enabled
+              color: !widget.enabled
                   ? Theme.of(context).iconTheme.color!.withOpacity(0.3)
                   : Theme.of(context).iconTheme.color,
             ),
