@@ -27,7 +27,7 @@ class Chapter extends Equatable {
           ? List<ShenImage>.from(
               map['chapterImages']?.map((x) => ShenImage.fromMap(x)))
           : null,
-      chapterParagraphs: List<String>.from(map['chapterParagraphs']),
+      chapterParagraphs: List<String>.from(map['chapterParagraphs'] ?? []),
     );
   }
 

@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:shenku/constants/fonts.dart';
 
 import '../../../constants/color.dart';
+import '../../../constants/fonts.dart';
 import '../../../data/models/book.dart';
 import '../../../data/models/shen_image.dart';
-import '../../../logic/services/general.dart';
+import '../../../logic/cubit/book_details_cubit.dart';
 import 'book_tile/context_button.dart';
 
 class BookTile extends StatefulWidget {
@@ -23,10 +23,6 @@ class BookTile extends StatefulWidget {
 
 class _BookTileState extends State<BookTile> {
   bool isHovering = false;
-
-  // void showDetails() {
-  //   context.read<SelectedMenu>().showDetails(widget.book);
-  // }
 
   void _toogleHover(PointerEvent e) {
     setState(() {
@@ -79,7 +75,7 @@ class _BookTileState extends State<BookTile> {
       onEnter: _toogleHover,
       onExit: _toogleHover,
       child: GestureDetector(
-        onTap: doNothing,
+        onTap: () => context.detailsController.showDetails(widget.book),
         child: SizedBox(
           width: 146,
           height: 212,

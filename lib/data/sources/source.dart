@@ -12,7 +12,7 @@ abstract class BookSource {
 
   Future<List<Book>> search(String term);
 
-  Future<Book> getBookDetails(String bookSource);
+  Future<Book> getBookDetails(Book book, {required List<String> fields});
 
   Future<Chapter> getBookChapterDetails(String chapterSource);
 }

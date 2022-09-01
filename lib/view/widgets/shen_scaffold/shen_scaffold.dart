@@ -1,8 +1,11 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../constants/color.dart';
+import '../../../logic/cubit/book_details_cubit.dart';
 import '../../../logic/services/general.dart';
+import '../book_details/book_details.dart';
 import 'app_bar.dart';
 import 'drawer.dart';
 import 'window_buttons.dart';
@@ -22,36 +25,80 @@ class ShenScaffold extends StatelessWidget {
     );
   }
 
-  Expanded _buildMainAppScene() {
-    return Expanded(
-      child: Row(
-        children: [
-          Column(
+  Widget _buildMainAppScene() {
+    return BlocBuilder<BookDetailsCubit, BookDetailsState>(
+      builder: (context, state) {
+        return Expanded(
+          child: Row(
             children: [
-              WindowTitleBarBox(child: MoveWindow()),
-              Expanded(
-                child: Hero(
-                  tag: 'app-drawer',
-                  child: AppDrawer(
-                    startExpanded: startExpanded,
+              Column(
+                children: [
+                  WindowTitleBarBox(child: MoveWindow()),
+                  Expanded(
+                    child: Hero(
+                      tag: 'app-drawer',
+                      child: AppDrawer(
+                        startExpanded: startExpanded,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Visibility(
+                visible:
+                    state.hasState ? screenSize(context).width >= 1360 : true,
+                child: Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: thisWhite.withOpacity(.3),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(10),
+                        topRight: state.hasState
+                            ? const Radius.circular(10)
+                            : Radius.zero,
+                      ),
+                    ),
+                    child: body,
                   ),
                 ),
               ),
+              if (state.hasState && screenSize(context).width < 1360)
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: thisWhite.withOpacity(.15),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                      ),
+                    ),
+                    child: BookDetailsView(),
+                  ),
+                ),
+              AnimatedContainer(
+                width: (state.hasState && !(screenSize(context).width < 1360))
+                    ? 600
+                    : 0,
+                padding: const EdgeInsets.all(24),
+                margin: state.hasState
+                    ? const EdgeInsets.only(left: 10)
+                    : EdgeInsets.zero,
+                duration: const Duration(milliseconds: 100),
+                decoration: BoxDecoration(
+                  color: thisWhite.withOpacity(.15),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                  ),
+                ),
+                child: state.hasState
+                    ? BookDetailsView()
+                    : const SizedBox.expand(),
+              ),
             ],
           ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(50),
-              decoration: BoxDecoration(
-                color: thisWhite.withOpacity(.3),
-                borderRadius:
-                    const BorderRadius.only(topLeft: Radius.circular(10)),
-              ),
-              child: body,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

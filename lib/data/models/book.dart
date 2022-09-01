@@ -54,6 +54,14 @@ class Book extends Equatable {
   final BookStatus? status;
   final BookType type;
 
+  @override
+  List<Object> get props => [id];
+
+  @override
+  String toString() {
+    return 'Book(chapterCount: $chapterCount, chapters: ${chapters?.length}, coverPicture: $coverPicture, description: $description, id: $id, link: $link, name: $name, rating: $rating, source: $source, status: $status, type: $type)';
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -90,9 +98,19 @@ class Book extends Equatable {
     }
   }
 
-  @override
-  String toString() {
-    return 'Book(name: $name, source: $source, type: $type)';
+  Book merge(Book book, {required List<String> fields}) {
+    return copyWith(
+      chapterCount: fields.contains('chapterCount') ? book.chapterCount : null,
+      chapters: fields.contains('chapters') ? book.chapters : null,
+      coverPicture: fields.contains('coverPicture') ? book.coverPicture : null,
+      description: fields.contains('description') ? book.description : null,
+      link: fields.contains('link') ? book.link : null,
+      name: fields.contains('name') ? book.name : null,
+      rating: fields.contains('rating') ? book.rating : null,
+      source: fields.contains('source') ? book.source : null,
+      status: fields.contains('status') ? book.status : null,
+      type: fields.contains('type') ? book.type : null,
+    );
   }
 
   Book copyWith({
@@ -123,8 +141,22 @@ class Book extends Equatable {
     );
   }
 
-  @override
-  List<Object> get props => [id];
+  bool get hasCompleteData =>
+      chapterCount != null &&
+      chapters != null &&
+      coverPicture != null &&
+      description != null &&
+      rating != null &&
+      status != null;
+
+  List<String> get missingFields => [
+        if (chapterCount == null) 'chapterCount',
+        if (chapters == null) 'chapters',
+        if (coverPicture == null) 'coverPicture',
+        if (description == null) 'description',
+        if (rating == null) 'rating',
+        if (status == null) 'status',
+      ];
 }
 
 enum BookType { novel, manga }

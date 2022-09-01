@@ -13,12 +13,6 @@ class Manganelo extends BookSource {
   Manganelo() : super('Manganelo');
 
   final String domain = "https://manganato.com";
-  final String homePageEndpoint = "/genre-all?type=topview";
-  final String homePageItem = ".content-genres-item";
-  final String homePageItemCoverImage = ".content-genres-item a img";
-  final String homePageItemTitle = ".content-genres-item h3 a";
-  final String homePageItemRating =
-      ".content-genres-item a em.genres-item-rate";
 
   @override
   Future<Chapter> getBookChapterDetails(String chapterSource) async {
@@ -27,13 +21,98 @@ class Manganelo extends BookSource {
   }
 
   @override
-  Future<Book> getBookDetails(String bookSource) async {
-    // TODO: implement getBookDetails
-    throw UnimplementedError();
+  Future<Book> getBookDetails(Book book, {required List<String> fields}) async {
+    const coverImageSelector = '.info-image';
+    const rateSelector = '#rate_row_cmd em[property="v:average"]';
+    const statusTableValueSelector = '.variations-tableInfo td.table-value';
+    const descriptionSelector = '#panel-story-info-description';
+    const chapterNameSelector = '.row-content-chapter .a-h a';
+
+    _log.info('Getting details from ${book.link}');
+    final webScraper = WebScraper(domain);
+
+    Book result = book;
+
+    try {
+      if (await webScraper.loadFullURL(book.link)) {
+        //* Get cover picture
+        if (fields.contains('coverPicture')) {
+          webScraper.getElement(coverImageSelector, ['src']).iterate((e, i) {
+            var src = e['attributes']['src'];
+            result = result.copyWith(coverPicture: ShenImage(src));
+          });
+        }
+
+        //* Get rating
+        if (fields.contains('rating')) {
+          webScraper.getElement(rateSelector, []).iterate((e, i) {
+            var rating = e['title'];
+            result = result.copyWith(rating: rating);
+          });
+        }
+
+        //* Get status
+        if (fields.contains('status')) {
+          webScraper
+              .getElement(statusTableValueSelector, [])
+              .where(
+                  (e) => e['title'] == 'Ongoing' || e['title'] == 'Completed')
+              .toList()
+              .iterate((e, i) {
+                var status = e['title'] == 'Ongoing'
+                    ? BookStatus.ongoing
+                    : BookStatus.completed;
+                result = result.copyWith(status: status);
+              });
+        }
+
+        //* Get status
+        if (fields.contains('description')) {
+          webScraper.getElement(descriptionSelector, []).iterate((e, i) {
+            var description = e['title']
+                .toString()
+                .replaceAll('Description :', '')
+                .replaceAll('"', '')
+                .trim();
+            result = result.copyWith(description: description);
+          });
+        }
+
+        //* Get chapters & chapterCount
+        if (fields.contains('chapters')) {
+          List<Chapter> chapters = [];
+          webScraper.getElement(chapterNameSelector, ['href']).iterate((e, i) {
+            var name = e['title'];
+            var link = e['attributes']['href'];
+            chapters.add(Chapter(
+              id: hash(domain + book.name + name),
+              name: name,
+              link: link,
+              source: ChapterSource.network,
+            ));
+          });
+          result = result.copyWith(
+            chapters: chapters,
+            chapterCount: chapters.length,
+          );
+        }
+
+        return result;
+      } else {
+        throw Exception('Unable to get homepage');
+      }
+    } on WebScraperException catch (e) {
+      _log.warning(e.errorMessage());
+      return result;
+    }
   }
 
   @override
   Future<List<Book>> getHomePage() async {
+    const String homePageEndpoint = "/genre-all?type=topview";
+    const String homePageItemCoverImage = ".content-genres-item a img";
+    const String homePageItemTitle = ".content-genres-item h3 a";
+
     List<Book> result = [];
     _log.info('Getting homepage');
     final webScraper = WebScraper(domain);
@@ -52,22 +131,18 @@ class Manganelo extends BookSource {
           ));
         });
 
+        //* Get cover picture
         webScraper.getElement(homePageItemCoverImage, ['src']).iterate((e, i) {
           var src = e['attributes']['src'];
           result[i] = result[i].copyWith(coverPicture: ShenImage(src));
-        });
-
-        webScraper.getElement(homePageItemCoverImage, []).iterate((e, i) {
-          var rating = e['title'];
-          result[i] = result[i].copyWith(rating: rating);
         });
 
         return result;
       } else {
         throw Exception('Unable to get homepage');
       }
-    } on Exception catch (e) {
-      _log.warning(e);
+    } on WebScraperException catch (e) {
+      _log.warning(e.errorMessage());
       return result;
     }
   }

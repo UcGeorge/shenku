@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
 import 'constants/constants.dart';
+import 'logic/cubit/book_details_cubit.dart';
 import 'logic/cubit/homepage_cubit.dart';
 import 'logic/cubit/navigator_cubit.dart';
 import 'logic/cubit/storage_cubit.dart';
@@ -60,6 +61,10 @@ class ShenKu extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => homepageCubit,
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => BookDetailsCubit(),
           lazy: false,
         ),
       ],

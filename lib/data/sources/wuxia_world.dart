@@ -12,7 +12,7 @@ class WuxiaWorld extends BookSource {
   }
 
   @override
-  Future<Book> getBookDetails(String bookSource) async {
+  Future<Book> getBookDetails(Book book, {required List<String> fields}) async {
     // TODO: implement getBookDetails
     throw UnimplementedError();
   }
