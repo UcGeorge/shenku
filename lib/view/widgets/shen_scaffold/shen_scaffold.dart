@@ -1,6 +1,7 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shenku/view/widgets/status_bar/shen_status_bar.dart';
 
 import '../../../constants/color.dart';
 import '../../../logic/cubit/book_details_cubit.dart';
@@ -16,14 +17,6 @@ class ShenScaffold extends StatelessWidget {
 
   final Widget body;
   final bool? startExpanded;
-
-  Container _buildBottomBar(BuildContext context) {
-    return Container(
-      height: 20,
-      width: screenSize(context).width,
-      color: purple,
-    );
-  }
 
   Widget _buildMainAppScene() {
     return BlocBuilder<BookDetailsCubit, BookDetailsState>(
@@ -126,7 +119,7 @@ class ShenScaffold extends StatelessWidget {
           children: [
             _buildAppTitleBar(),
             _buildMainAppScene(),
-            _buildBottomBar(context)
+            const ShenStatusBar(),
           ],
         ),
       ),

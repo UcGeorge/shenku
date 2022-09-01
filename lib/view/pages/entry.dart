@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
+import '../../config/config.dart';
 import '../../constants/color.dart';
+import '../../constants/fonts.dart';
 import '../../logic/classes/alert.dart';
 import '../../logic/cubit/navigator_cubit.dart';
+import '../../logic/cubit/status_bar_cubit.dart';
 import '../../logic/cubit/storage_cubit.dart';
 import '../../logic/services/general.dart';
 import '../widgets/init_page/logo.dart';
@@ -23,8 +29,26 @@ class _EntryPointState extends State<EntryPoint> {
         context.storageCubit.initializeDirectory(onComplete: onInitComplete));
   }
 
-  void onInitComplete(bool success, String? error) {
+  void onInitComplete(bool success, String? error) async {
     if (success) {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      context.statusBar.addlItem(
+        'cwd',
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 4.0,
+          ),
+          child: Text(
+            Directory(appDir(appDocDir.path)).absolute.path,
+            overflow: TextOverflow.ellipsis,
+            style: nunito.copyWith(
+              fontSize: 11,
+              color: white,
+              letterSpacing: 1.5,
+            ),
+          ),
+        ),
+      );
       context.navigator.goToHome(context);
     } else {
       context.showError(error!);

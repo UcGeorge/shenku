@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
+import 'package:shenku/logic/cubit/reading_cubit.dart';
+import 'package:shenku/logic/cubit/status_bar_cubit.dart';
 
 import 'constants/constants.dart';
 import 'logic/cubit/book_details_cubit.dart';
@@ -65,6 +67,14 @@ class ShenKu extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => BookDetailsCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => ReadingCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => StatusBarCubit(),
           lazy: false,
         ),
       ],

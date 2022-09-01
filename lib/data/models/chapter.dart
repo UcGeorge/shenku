@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
+import 'package:shenku/data/models/book.dart';
+
 import 'shen_image.dart';
 
 class Chapter extends Equatable {
@@ -56,6 +58,37 @@ class Chapter extends Equatable {
 
   @override
   List<Object> get props => [id];
+
+  bool hasContent(BookType type) => type == BookType.manga
+      ? chapterImages != null
+      : chapterParagraphs != null;
+
+  int contentLength(BookType type) => type == BookType.manga
+      ? chapterImages?.length ?? 0
+      : chapterParagraphs?.length ?? 0;
+
+  Chapter copyWith({
+    List<ShenImage>? chapterImages,
+    List<String>? chapterParagraphs,
+    String? id,
+    String? link,
+    String? name,
+    ChapterSource? source,
+  }) {
+    return Chapter(
+      chapterImages: chapterImages ?? this.chapterImages,
+      chapterParagraphs: chapterParagraphs ?? this.chapterParagraphs,
+      id: id ?? this.id,
+      link: link ?? this.link,
+      name: name ?? this.name,
+      source: source ?? this.source,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Chapter(chapterImages: $chapterImages, chapterParagraphs: ${chapterParagraphs?.length}, id: $id, link: $link, name: $name, source: $source)';
+  }
 }
 
 enum ChapterSource { network, file }

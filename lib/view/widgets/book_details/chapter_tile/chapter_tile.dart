@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shenku/data/models/book.dart';
-import 'package:shenku/data/models/chapter.dart';
+
+import '../../../../data/models/book.dart';
+import '../../../../data/models/chapter.dart';
+import '../../../../logic/cubit/navigator_cubit.dart';
+import '../../../../logic/cubit/reading_cubit.dart';
+import '../../../pages/chapter.dart';
 
 class ChapterItem extends StatefulWidget {
+  const ChapterItem(this.chapter, this.book, {Key? key}) : super(key: key);
+
   final Book book;
   final Chapter chapter;
-  const ChapterItem(this.chapter, this.book, {Key? key}) : super(key: key);
 
   @override
   State<ChapterItem> createState() => _ChapterItemState();
@@ -14,20 +19,24 @@ class ChapterItem extends StatefulWidget {
 class _ChapterItemState extends State<ChapterItem> {
   bool isHovering = false;
 
+  void showChapter(BuildContext context) {
+    context.reader.readChapter(widget.book, widget.chapter.id);
+    context.navigator.goToCustomScaffold(
+      context,
+      scaffold: ChapterView(),
+    );
+  }
+
   void _toogleHover(PointerEvent e) {
     setState(() {
       isHovering = !isHovering;
     });
   }
 
-  // void showChapter() {
-  //   context.read<SelectedMenu>().showChapter(widget.book, widget.chapter.name);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // onTap: showChapter,
+      onTap: () => showChapter(context),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: _toogleHover,

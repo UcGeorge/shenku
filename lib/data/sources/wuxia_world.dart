@@ -6,7 +6,7 @@ class WuxiaWorld extends BookSource {
   WuxiaWorld() : super('Wuxia World');
 
   @override
-  Future<Chapter> getBookChapterDetails(String chapterSource) async {
+  Future<Chapter> getBookChapterDetails(Chapter chapter) async {
     // TODO: implement getBookChapterDetails
     throw UnimplementedError();
   }

@@ -15,9 +15,29 @@ class Manganelo extends BookSource {
   final String domain = "https://manganato.com";
 
   @override
-  Future<Chapter> getBookChapterDetails(String chapterSource) async {
-    // TODO: implement getBookChapterDetails
-    throw UnimplementedError();
+  Future<Chapter> getBookChapterDetails(Chapter chapter) async {
+    const chapterImageSelector = '.container-chapter-reader img';
+
+    final webScraper = WebScraper(domain);
+
+    Chapter result = chapter.copyWith(chapterImages: []);
+
+    try {
+      if (await webScraper.loadFullURL(chapter.link)) {
+        //* Get chapter pictures
+        webScraper.getElement(chapterImageSelector, ['src']).iterate((e, i) {
+          var src = e['attributes']['src'];
+          result.chapterImages!.add(ShenImage(src));
+        });
+
+        return result;
+      } else {
+        throw Exception('Unable to get chapter details');
+      }
+    } on WebScraperException catch (e) {
+      _log.warning(e.errorMessage());
+      return result;
+    }
   }
 
   @override
@@ -99,7 +119,7 @@ class Manganelo extends BookSource {
 
         return result;
       } else {
-        throw Exception('Unable to get homepage');
+        throw Exception('Unable to get book details');
       }
     } on WebScraperException catch (e) {
       _log.warning(e.errorMessage());

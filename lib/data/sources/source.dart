@@ -14,7 +14,7 @@ abstract class BookSource {
 
   Future<Book> getBookDetails(Book book, {required List<String> fields});
 
-  Future<Chapter> getBookChapterDetails(String chapterSource);
+  Future<Chapter> getBookChapterDetails(Chapter chapter);
 }
 
 extension Iterator<T> on List<T> {

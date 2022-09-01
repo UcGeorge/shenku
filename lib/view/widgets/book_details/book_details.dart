@@ -213,9 +213,10 @@ class BookDetailsView extends StatelessWidget {
                 child: Text(
                   'CHAPTERS',
                   style: Theme.of(context).textTheme.headline2!.copyWith(
-                      fontSize: 11,
-                      color: Colors.white.withOpacity(0.5),
-                      letterSpacing: 1),
+                        fontSize: 11,
+                        color: Colors.white.withOpacity(0.5),
+                        letterSpacing: 1,
+                      ),
                 ),
               ),
               ...state.book!.chapters!.map((e) => ChapterItem(e, state.book!)),

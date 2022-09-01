@@ -40,6 +40,10 @@ class NavigationCubit extends Cubit<NavigatonState> {
     Navigator.of(context).pushNamed('action', arguments: actionSheet);
   }
 
+  void goToCustomScaffold(BuildContext context, {required Widget scaffold}) {
+    Navigator.of(context).pushNamed('scaffold', arguments: scaffold);
+  }
+
   void goToHome(BuildContext context, [bool startExpanded = false]) {
     clearStateless(context);
     emit(
@@ -99,7 +103,7 @@ class NavigationCubit extends Cubit<NavigatonState> {
           case 'Library':
             Navigator.of(context).pushNamed(
               'scaffold',
-              arguments: const LibraryPage(),
+              arguments: LibraryPage(),
             );
         }
       },
