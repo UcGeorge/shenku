@@ -120,7 +120,6 @@ class MultiSourceImage extends StatelessWidget {
     ..image.resolve(const ImageConfiguration()).addListener(
       ImageStreamListener(
         (info, call) {
-          _log.info('Networkimage is fully loaded and saved');
           onLoadComplete?.call();
         },
       ),

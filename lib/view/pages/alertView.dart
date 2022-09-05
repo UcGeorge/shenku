@@ -25,10 +25,10 @@ class _AlertViewState extends State<AlertView> {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(
-      widget.alert.duration ?? Alert.kDialogueDuration,
-      pop,
-    );
+    // Future.delayed(
+    //   widget.alert.duration ?? Alert.kDialogueDuration,
+    //   pop,
+    // );
 
     return Column(
       mainAxisSize: MainAxisSize.min,

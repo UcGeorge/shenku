@@ -45,10 +45,7 @@ class ReadingCubit extends Cubit<ReadingState> {
     Book book = state.book!;
     BookSource source = appBookSources.getSource(book.source);
     Chapter chapter = state.chapter!;
-    final chapterIndex = context.appData.library
-        .firstWhere((e) => e.id == book.id)
-        .chapters!
-        .indexOf(chapter);
+    final chapterIndex = book.chapters!.indexOf(chapter);
 
     if ((book.type == BookType.manga && chapter.chapterImages == null) ||
         (book.type == BookType.novel && chapter.chapterParagraphs == null)) {

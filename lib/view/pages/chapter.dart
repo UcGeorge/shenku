@@ -2,6 +2,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:logging/logging.dart';
 
 import '../../constants/color.dart';
 import '../../constants/fonts.dart';
@@ -10,9 +11,12 @@ import '../../logic/cubit/reading_cubit.dart';
 import '../../logic/cubit/status_bar_cubit.dart';
 import '../../logic/services/general.dart';
 import '../widgets/chapter_view/chapter_header.dart';
+import '../widgets/chapter_view/nav_buttons.dart';
 import '../widgets/image/multi_source_image.dart';
 import '../widgets/shen_scaffold/window_buttons.dart';
 import '../widgets/status_bar/shen_status_bar.dart';
+
+final _log = Logger('chapter_view');
 
 class ChapterView extends StatefulWidget {
   const ChapterView({Key? key}) : super(key: key);
@@ -87,7 +91,8 @@ class _ChapterViewState extends State<ChapterView> {
         : const SizedBox.shrink();
   }
 
-  Widget _buildChapterContent(BuildContext context, ReadingState state) {
+  Widget _buildChapterContent(BuildContext context, ReadingState state_) {
+    final state = state_;
     context.statusBar.addrItem(
       'chapter-load-progress',
       _buildProgressWidget(context, state),
@@ -125,11 +130,17 @@ class _ChapterViewState extends State<ChapterView> {
                             fit: BoxFit.fitWidth,
                             useOriginalSize: true,
                             onLoadComplete: () {
-                              loadedUnits.add(i);
-                              context.statusBar.update(
-                                'chapter-load-progress',
-                                _buildProgressWidget(context, state),
-                              );
+                              final localChapterId = state.chapterId;
+                              final remoteChapterId =
+                                  context.reader.state.chapterId;
+                              // _log.info('$localChapterId || $remoteChapterId');
+                              if (localChapterId == remoteChapterId) {
+                                loadedUnits.add(i);
+                                context.statusBar.update(
+                                  'chapter-load-progress',
+                                  _buildProgressWidget(context, state),
+                                );
+                              }
                             },
                           );
                   },
@@ -166,6 +177,21 @@ class _ChapterViewState extends State<ChapterView> {
                   ),
                 ),
                 _buildAppTitleBar(state),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ChapterNavButtons(
+                      book: state.book!,
+                      chapter: state.chapter!,
+                      onTap: (callback) {
+                        setState(() => loadedUnits.clear());
+                        context.statusBar.removerItem('chapter-load-progress');
+                        callback.call();
+                      },
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
