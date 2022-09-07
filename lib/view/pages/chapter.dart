@@ -122,6 +122,7 @@ class _ChapterViewState extends State<ChapterView> {
                             ),
                           )
                         : MultiSourceImage(
+                            shouldRetry: true,
                             source: state.chapter!.chapterImages![i].source,
                             url: state.chapter!.chapterImages![i].url,
                             radius: 20,
