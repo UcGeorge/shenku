@@ -1,17 +1,21 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../config/config.dart';
 import 'book.dart';
+import 'history_item.dart';
 
-class AppData {
+class AppData extends Equatable {
   AppData({
-    this.appVersion = appVer,
     List<Book>? library,
     DateTime? dateModified,
     String? appDataId,
+    this.appVersion = appVer,
+    Map<String, BookHistoryItem>? history,
   })  : library = library ?? [],
+        history = history ?? {},
         dateModified = dateModified ?? DateTime.now(),
         appDataId = appDataId ?? const Uuid().v4();
 
@@ -22,38 +26,52 @@ class AppData {
 
   factory AppData.fromMap(Map<String, dynamic> map) {
     return AppData(
+      appDataId: map['appDataId'] ?? '',
       appVersion: map['appVersion'] ?? '',
       dateModified: DateTime.fromMillisecondsSinceEpoch(map['dateModified']),
-      appDataId: map['appDataId'] ?? '',
       library: List<Book>.from(map['library']?.map((x) => Book.fromMap(x))),
+      history: Map<String, BookHistoryItem>.from(map['history']),
     );
   }
 
   final String appDataId;
   final String appVersion;
   final DateTime dateModified;
+  final Map<String, BookHistoryItem> history;
   final List<Book> library;
 
+  @override
+  List<Object> get props {
+    return [
+      appDataId,
+      appVersion,
+      dateModified,
+    ];
+  }
+
   AppData copyWith({
+    String? appDataId,
     String? appVersion,
     DateTime? dateModified,
-    String? appDataId,
     List<Book>? library,
+    Map<String, BookHistoryItem>? history,
   }) {
     return AppData(
+      appDataId: appDataId ?? this.appDataId,
       appVersion: appVersion ?? this.appVersion,
       dateModified: dateModified ?? this.dateModified,
-      appDataId: appDataId ?? this.appDataId,
       library: library ?? this.library,
+      history: history ?? this.history,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'appDataId': appDataId,
       'appVersion': appVersion,
       'dateModified': dateModified.millisecondsSinceEpoch,
-      'appDataId': appDataId,
       'library': library.map((x) => x.toMap()).toList(),
+      'history': history,
     };
   }
 
