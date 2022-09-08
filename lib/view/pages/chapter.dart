@@ -1,4 +1,5 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -47,44 +48,32 @@ class _ChapterViewState extends State<ChapterView> {
   }
 
   Widget _buildProgressWidget(BuildContext context, ReadingState state) {
+    final isComplete =
+        loadedUnits.length == state.chapter!.contentLength(state.book!.type);
     return state.chapter!.hasContent(state.book!.type)
         ? Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Stack(
-                  children: [
-                    Container(
-                      height: 4,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        color: white.withOpacity(.15),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+                if (!isComplete)
+                  Text(
+                    '${loadedUnits.length} / ${state.chapter!.contentLength(state.book!.type)}',
+                    overflow: TextOverflow.ellipsis,
+                    style: nunito.copyWith(
+                      fontSize: 11,
+                      color: white,
+                      letterSpacing: 1.5,
                     ),
-                    Container(
-                      height: 4,
-                      width: (loadedUnits.length /
-                              state.chapter!.contentLength(state.book!.type)) *
-                          200,
-                      decoration: BoxDecoration(
-                        color: white,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${loadedUnits.length} / ${state.chapter!.contentLength(state.book!.type)}',
-                  overflow: TextOverflow.ellipsis,
-                  style: nunito.copyWith(
-                    fontSize: 11,
-                    color: white,
-                    letterSpacing: 1.5,
                   ),
-                ),
+                const SizedBox(width: 8),
+                isComplete
+                    ? const Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.green,
+                        size: 16,
+                      )
+                    : const CupertinoActivityIndicator(radius: 8),
               ],
             ),
           )
@@ -108,6 +97,8 @@ class _ChapterViewState extends State<ChapterView> {
                     : screenSize(context).width - 2,
                 color: dark,
                 child: ListView.builder(
+                  // shrinkWrap: true,
+                  controller: context.reader.scrollController,
                   cacheExtent: 999999999999999,
                   itemCount: state.chapter!.contentLength(state.book!.type),
                   itemBuilder: (_, i) {
@@ -122,6 +113,7 @@ class _ChapterViewState extends State<ChapterView> {
                             ),
                           )
                         : MultiSourceImage(
+                            shouldRetry: true,
                             source: state.chapter!.chapterImages![i].source,
                             url: state.chapter!.chapterImages![i].url,
                             radius: 20,
@@ -184,8 +176,10 @@ class _ChapterViewState extends State<ChapterView> {
                     child: ChapterNavButtons(
                       book: state.book!,
                       chapter: state.chapter!,
+                      chapterScrollController: context.reader.scrollController,
                       onTap: (callback) {
                         setState(() => loadedUnits.clear());
+                        context.reader.scrollController.jumpTo(0);
                         context.statusBar.removerItem('chapter-load-progress');
                         callback.call();
                       },

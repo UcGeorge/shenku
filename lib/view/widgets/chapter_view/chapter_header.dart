@@ -52,7 +52,7 @@ class _ChapterHeaderState extends State<ChapterHeader> {
             children: [
               ChapterCloseButton(
                 onTap: () => Future.delayed(
-                  const Duration(milliseconds: 50),
+                  const Duration(milliseconds: 0),
                   () {
                     //TODO: Save state of books in library
                     context.statusBar.removerItem('chapter-load-progress');
