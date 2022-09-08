@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shenku/logic/services/general.dart';
 
 import '../../../../constants/color.dart';
-import '../../../../logic/classes/alert.dart';
 
-class ShenChapterNavButton extends StatefulWidget {
+class ShenChapterNavButton extends StatelessWidget {
   const ShenChapterNavButton({
     Key? key,
     required this.forward,
@@ -16,56 +16,25 @@ class ShenChapterNavButton extends StatefulWidget {
   final VoidCallback onTap;
 
   @override
-  State<ShenChapterNavButton> createState() => _ShenChapterNavButtonState();
-}
-
-class _ShenChapterNavButtonState extends State<ShenChapterNavButton> {
-  bool isHovering = false;
-
-  void _toogleHover(PointerEvent e) {
-    setState(() {
-      isHovering = !isHovering;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: _toogleHover,
-      onExit: _toogleHover,
-      cursor: SystemMouseCursors.click,
+      cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.forbidden,
       child: GestureDetector(
-        onTap: () => widget.enabled
-            ? widget.onTap()
-            : context.showWarning(
-                widget.forward
-                    ? 'Oops! You have reached the last chapter.'
-                    : 'This is the first chapter!',
-              ),
+        onTap: () => enabled ? onTap() : doNothing(),
         child: Container(
+          height: 40,
+          width: 40,
           decoration: BoxDecoration(
-            color: blueGrey.withOpacity(isHovering ? 1 : .15),
-            borderRadius: BorderRadius.only(
-              bottomLeft:
-                  !widget.forward ? const Radius.circular(20) : Radius.zero,
-              topLeft:
-                  !widget.forward ? const Radius.circular(20) : Radius.zero,
-              bottomRight:
-                  widget.forward ? const Radius.circular(20) : Radius.zero,
-              topRight:
-                  widget.forward ? const Radius.circular(20) : Radius.zero,
-            ),
+            color: blueGrey.withOpacity(enabled ? 1 : .3),
+            borderRadius: BorderRadius.circular(100),
           ),
           child: Center(
-            child: Text(
-              widget.forward ? 'Next' : 'Previous',
-              style: Theme.of(context).textTheme.headline2!.copyWith(
-                    fontSize: 11,
-                    color: isHovering
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.5),
-                    letterSpacing: 1.5,
-                  ),
+            child: RotatedBox(
+              quarterTurns: forward ? 0 : 2,
+              child: Icon(
+                Icons.fast_forward_rounded,
+                color: white.withOpacity(enabled ? 1 : .3),
+              ),
             ),
           ),
         ),
