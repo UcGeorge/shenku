@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shenku/data/models/history_item.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../config/config.dart';
@@ -60,6 +61,42 @@ class StorageCubit extends Cubit<StorageState> {
   void modifyAppData(AppData appData) {
     emit(state.copyWith(appData: appData));
     saveData();
+
+    void addToHistory({
+      required bookId,
+      required chapterId,
+      required int pageNumber,
+      required double position,
+    }) {
+      final chapterHistoryItem = ChapterHistoryItem(
+        chapterId: chapterId,
+        position: position,
+        pageNumber: pageNumber,
+      );
+      emit(state.copyWith(
+        appData: state.appData.copyWith(
+          history: (state.appData.history)
+            ..update(
+              bookId,
+              (value) => value.copyWith(
+                lastReadChapterId: chapterId,
+                chapterHistory: state.appData.history[bookId]!.chapterHistory
+                  ..update(
+                    chapterId,
+                    (value) => chapterHistoryItem,
+                    ifAbsent: () => chapterHistoryItem,
+                  ),
+              ),
+              ifAbsent: () => BookHistoryItem(
+                bookId: bookId,
+                lastReadChapterId: chapterId,
+                chapterHistory: {chapterId: chapterHistoryItem},
+              ),
+            ),
+        ),
+      ));
+      saveData();
+    }
   }
 
   void saveData() async {

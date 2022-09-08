@@ -16,8 +16,8 @@ class BookHistoryItem extends Equatable {
     return BookHistoryItem(
       bookId: map['bookId'] ?? '',
       lastReadChapterId: map['lastReadChapterId'] ?? '',
-      chapterHistory:
-          Map<String, ChapterHistoryItem>.from(map['chapterHistory']),
+      chapterHistory: Map<String, dynamic>.from(map['chapterHistory']).map(
+          (key, value) => MapEntry(key, ChapterHistoryItem.fromMap(value))),
     );
   }
 
@@ -48,7 +48,8 @@ class BookHistoryItem extends Equatable {
     return {
       'bookId': bookId,
       'lastReadChapterId': lastReadChapterId,
-      'chapterHistory': chapterHistory,
+      'chapterHistory':
+          chapterHistory.map((key, value) => MapEntry(key, value.toMap())),
     };
   }
 

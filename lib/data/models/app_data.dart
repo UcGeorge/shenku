@@ -30,7 +30,8 @@ class AppData extends Equatable {
       appVersion: map['appVersion'] ?? '',
       dateModified: DateTime.fromMillisecondsSinceEpoch(map['dateModified']),
       library: List<Book>.from(map['library']?.map((x) => Book.fromMap(x))),
-      history: Map<String, BookHistoryItem>.from(map['history']),
+      history: Map<String, dynamic>.from(map['history'])
+          .map((key, value) => MapEntry(key, BookHistoryItem.fromMap(value))),
     );
   }
 
@@ -71,7 +72,7 @@ class AppData extends Equatable {
       'appVersion': appVersion,
       'dateModified': dateModified.millisecondsSinceEpoch,
       'library': library.map((x) => x.toMap()).toList(),
-      'history': history,
+      'history': history.map((key, value) => MapEntry(key, value.toMap())),
     };
   }
 
