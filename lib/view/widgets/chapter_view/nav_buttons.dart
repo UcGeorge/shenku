@@ -5,6 +5,7 @@ import '../../../constants/fonts.dart';
 import '../../../data/models/book.dart';
 import '../../../data/models/chapter.dart';
 import '../../../logic/cubit/reading_cubit.dart';
+import '../../../logic/cubit/storage_cubit.dart';
 import 'nav_button/shen_nav_button.dart';
 
 class ChapterNavButtons extends StatefulWidget {
@@ -119,14 +120,25 @@ class _ChapterNavButtonsState extends State<ChapterNavButtons> {
               ShenChapterNavButton(
                 forward: false,
                 enabled: widget.book.chapters!.last != widget.chapter,
-                onTap: () => widget.onTap(() {
+                onTap: () => widget.onTap(() async {
+                  final nextChapterId = widget
+                      .book
+                      .chapters![
+                          widget.book.chapters!.indexOf(widget.chapter) + 1]
+                      .id;
+                  await context.storageCubit.removeFromHistory(
+                    bookId: widget.book.id,
+                    chapterId: widget.chapter.id,
+                  );
+                  await context.storageCubit.addToHistory(
+                    bookId: widget.book.id,
+                    chapterId: nextChapterId,
+                    pageNumber: 1,
+                    position: 0,
+                  );
                   context.reader.readChapter(
                     widget.book,
-                    widget
-                        .book
-                        .chapters![
-                            widget.book.chapters!.indexOf(widget.chapter) + 1]
-                        .id,
+                    nextChapterId,
                   );
                 }),
               ),
@@ -134,14 +146,25 @@ class _ChapterNavButtonsState extends State<ChapterNavButtons> {
               ShenChapterNavButton(
                 forward: true,
                 enabled: widget.book.chapters!.first != widget.chapter,
-                onTap: () => widget.onTap(() {
+                onTap: () => widget.onTap(() async {
+                  final nextChapterId = widget
+                      .book
+                      .chapters![
+                          widget.book.chapters!.indexOf(widget.chapter) - 1]
+                      .id;
+                  await context.storageCubit.removeFromHistory(
+                    bookId: widget.book.id,
+                    chapterId: widget.chapter.id,
+                  );
+                  await context.storageCubit.addToHistory(
+                    bookId: widget.book.id,
+                    chapterId: nextChapterId,
+                    pageNumber: 1,
+                    position: 0,
+                  );
                   context.reader.readChapter(
                     widget.book,
-                    widget
-                        .book
-                        .chapters![
-                            widget.book.chapters!.indexOf(widget.chapter) - 1]
-                        .id,
+                    nextChapterId,
                   );
                 }),
               ),

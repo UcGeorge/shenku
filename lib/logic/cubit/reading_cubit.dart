@@ -17,14 +17,15 @@ final _log = Logger('reader_cubit');
 class ReadingCubit extends Cubit<ReadingState> {
   ReadingCubit() : super(ReadingState.init());
 
-  final ScrollController scrollController = ScrollController();
+  late ScrollController scrollController;
 
-  void readChapter(Book book, String chapterId) {
+  void readChapter(Book book, String chapterId, [double? offset]) {
     emit(state.copyWith(
       book: book,
       chapterId: chapterId,
       loadedUnits: 0,
     ));
+    scrollController = ScrollController(initialScrollOffset: offset ?? 0);
   }
 
   void stopReading(BuildContext context) {

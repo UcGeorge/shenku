@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shenku/constants/fonts.dart';
-import 'package:shenku/data/models/chapter.dart';
-import 'package:shenku/logic/cubit/status_bar_cubit.dart';
 
 import '../../../constants/color.dart';
+import '../../../constants/fonts.dart';
 import '../../../data/models/book.dart';
+import '../../../data/models/chapter.dart';
+import '../../../logic/cubit/reading_cubit.dart';
+import '../../../logic/cubit/status_bar_cubit.dart';
+import '../../../logic/cubit/storage_cubit.dart';
 import 'close_button.dart';
 
 class ChapterHeader extends StatefulWidget {
@@ -30,6 +32,31 @@ class _ChapterHeaderState extends State<ChapterHeader> {
     });
   }
 
+  void syncReadingData() {
+    final controller = context.reader.scrollController;
+    final chapterLength = widget.chapter.contentLength(widget.book.type);
+    final value = controller.hasClients &&
+            controller.position.haveDimensions &&
+            controller.position.maxScrollExtent != 0
+        ? (controller.offset / controller.position.maxScrollExtent) *
+            chapterLength
+        : 0;
+    if (value.toInt() != chapterLength && value.toInt() != 0) {
+      context.storageCubit.addToHistory(
+        bookId: widget.book.id,
+        chapterId: widget.chapter.id,
+        pageNumber: value.toInt(),
+        position: controller.offset,
+      );
+    } else {
+      context.storageCubit.removeFromHistory(
+        bookId: widget.book.id,
+        chapterId: widget.chapter.id,
+      );
+    }
+    context.statusBar.removerItem('chapter-load-progress');
+  }
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
@@ -53,10 +80,7 @@ class _ChapterHeaderState extends State<ChapterHeader> {
               ChapterCloseButton(
                 onTap: () => Future.delayed(
                   const Duration(milliseconds: 0),
-                  () {
-                    //TODO: Save state of books in library
-                    context.statusBar.removerItem('chapter-load-progress');
-                  },
+                  syncReadingData,
                 ),
                 enabled: true,
               ),
