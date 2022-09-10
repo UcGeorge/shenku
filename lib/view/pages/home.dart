@@ -57,6 +57,7 @@ class _HomePageState extends State<HomePage> {
                 BookSection(
                   title: 'Library',
                   books: state.library,
+                  cap: 5,
                   overrideSeeAll: () =>
                       context.navigator.goToLibrary(context, false),
                 ),

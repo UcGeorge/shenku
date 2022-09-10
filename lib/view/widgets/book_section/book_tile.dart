@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:shenku/view/widgets/image/multi_source_image.dart';
 
 import '../../../constants/color.dart';
 import '../../../constants/fonts.dart';
 import '../../../data/models/book.dart';
-import '../../../data/models/shen_image.dart';
 import '../../../logic/cubit/book_details_cubit.dart';
 import 'book_tile/context_button.dart';
 
@@ -37,29 +35,19 @@ class _BookTileState extends State<BookTile> {
           ? SizedBox(
               height: 118,
               width: 118,
-              child: widget.book.coverPicture!.source == ImageSource.network
-                  ? Image.network(
-                      widget.book.coverPicture!.url,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, o, s) => Container(
-                        height: 118,
-                        width: 118,
-                        decoration: const BoxDecoration(
-                          color: blueGrey,
-                        ),
-                      ),
-                    )
-                  : Image.file(
-                      File(widget.book.coverPicture!.url),
-                      errorBuilder: (context, o, s) => Container(
-                        height: 118,
-                        width: 118,
-                        decoration: const BoxDecoration(
-                          color: blueGrey,
-                        ),
-                      ),
-                      fit: BoxFit.cover,
-                    ),
+              child: MultiSourceImage(
+                source: widget.book.coverPicture!.source,
+                url: widget.book.coverPicture!.url,
+                radius: 118 / 2,
+                fit: BoxFit.cover,
+                errorPlaceholder: Container(
+                  height: 118,
+                  width: 118,
+                  decoration: const BoxDecoration(
+                    color: blueGrey,
+                  ),
+                ),
+              ),
             )
           : const SizedBox(
               height: 118,
@@ -75,7 +63,10 @@ class _BookTileState extends State<BookTile> {
       onEnter: _toogleHover,
       onExit: _toogleHover,
       child: GestureDetector(
-        onTap: () => context.detailsController.showDetails(widget.book),
+        onTap: () {
+          context.detailsController.showDetails(widget.book);
+          context.detailsController.getBookDetails(context);
+        },
         child: SizedBox(
           width: 146,
           height: 212,

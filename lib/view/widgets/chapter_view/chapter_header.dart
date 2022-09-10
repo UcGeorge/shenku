@@ -4,7 +4,6 @@ import '../../../constants/color.dart';
 import '../../../constants/fonts.dart';
 import '../../../data/models/book.dart';
 import '../../../data/models/chapter.dart';
-import '../../../logic/cubit/reading_cubit.dart';
 import '../../../logic/cubit/status_bar_cubit.dart';
 import '../../../logic/cubit/storage_cubit.dart';
 import 'close_button.dart';
@@ -33,27 +32,12 @@ class _ChapterHeaderState extends State<ChapterHeader> {
   }
 
   void syncReadingData() {
-    final controller = context.reader.scrollController;
-    final chapterLength = widget.chapter.contentLength(widget.book.type);
-    final value = controller.hasClients &&
-            controller.position.haveDimensions &&
-            controller.position.maxScrollExtent != 0
-        ? (controller.offset / controller.position.maxScrollExtent) *
-            chapterLength
-        : 0;
-    if (value.toInt() != chapterLength && value.toInt() != 0) {
-      context.storageCubit.addToHistory(
-        bookId: widget.book.id,
-        chapterId: widget.chapter.id,
-        pageNumber: value.toInt(),
-        position: controller.offset,
-      );
-    } else {
-      context.storageCubit.removeFromHistory(
-        bookId: widget.book.id,
-        chapterId: widget.chapter.id,
-      );
-    }
+    context.storageCubit.addToHistory(
+      bookId: widget.book.id,
+      chapterId: widget.chapter.id,
+      pageNumber: 1,
+      position: 0,
+    );
     context.statusBar.removerItem('chapter-load-progress');
   }
 

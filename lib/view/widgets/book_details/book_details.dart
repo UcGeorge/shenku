@@ -37,6 +37,7 @@ class BookDetailsView extends StatelessWidget {
                   url: state.book!.coverPicture!.url,
                   backgroundColor: thisWhite.withOpacity(.15),
                   fit: BoxFit.cover,
+                  useOldImageOnUrlChange: false,
                 ),
               ),
             ),
@@ -242,7 +243,7 @@ class BookDetailsView extends StatelessWidget {
         );
       },
       style: ElevatedButton.styleFrom(
-        primary: Colors.transparent,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -274,7 +275,7 @@ class BookDetailsView extends StatelessWidget {
         );
       },
       style: ElevatedButton.styleFrom(
-        primary: Colors.transparent,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -299,7 +300,7 @@ class BookDetailsView extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => context.storageCubit.addToLibrary(state.book!),
       style: ElevatedButton.styleFrom(
-        primary: violet,
+        backgroundColor: violet,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
@@ -320,7 +321,7 @@ class BookDetailsView extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => context.storageCubit.removeFromLibrary(state.book!),
       style: ElevatedButton.styleFrom(
-        primary: Colors.red,
+        backgroundColor: Colors.red,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
@@ -332,7 +333,6 @@ class BookDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.detailsController.getBookDetails(context);
     return BlocBuilder<BookDetailsCubit, BookDetailsState>(
       builder: (context, state) {
         return Column(
@@ -364,7 +364,13 @@ class BookDetailsView extends StatelessWidget {
                                     .contains(state.book!))
                                   _buildAddButton(context, state),
                                 if (storageState.appData.history
-                                    .containsKey(state.book!.id))
+                                        .containsKey(state.book!.id) &&
+                                    storageState.appData
+                                        .history[state.book!.id]!.chapterHistory
+                                        .containsKey(storageState
+                                            .appData
+                                            .history[state.book!.id]!
+                                            .lastReadChapterId))
                                   _buildResumeButton(
                                     context,
                                     state,
