@@ -20,6 +20,8 @@ class ReadingCubit extends Cubit<ReadingState> {
   late ScrollController scrollController;
 
   void readChapter(Book book, String chapterId, [double? offset]) {
+    _log.info(
+        'Reading chapter ${book.name} / ${book.chapters!.firstWhere((element) => element.id == chapterId).name}');
     emit(state.copyWith(
       book: book,
       chapterId: chapterId,
@@ -57,6 +59,8 @@ class ReadingCubit extends Cubit<ReadingState> {
     }
 
     if (chapter == state.chapter) {
+      _log.info(
+          'Got chapter details for ${state.book?.name} / ${state.chapter?.name}');
       emit(state.copyWith(
         book: book,
         chapterId: state.chapterId,

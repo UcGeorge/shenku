@@ -65,6 +65,7 @@ class StorageCubit extends Cubit<StorageState> {
   }
 
   Future<void> addToLibrary(Book book) async {
+    _log.info('Adding to library: ${book.name}');
     emit(state.copyWith(
       appData: state.appData.copyWith(
         library: state.appData.library..add(book),
@@ -74,6 +75,7 @@ class StorageCubit extends Cubit<StorageState> {
   }
 
   Future<void> removeFromLibrary(Book book) async {
+    _log.info('Removing from library: ${book.name}');
     emit(state.copyWith(
       appData: state.appData.copyWith(
         library: state.appData.library..remove(book),
@@ -88,6 +90,7 @@ class StorageCubit extends Cubit<StorageState> {
     required int pageNumber,
     required double position,
   }) async {
+    _log.info('Adding to history: $bookId - $chapterId');
     final chapterHistoryItem = ChapterHistoryItem(
       chapterId: chapterId,
       position: position,
@@ -121,12 +124,14 @@ class StorageCubit extends Cubit<StorageState> {
   Future<void> removeFromHistory({
     required bookId,
     required chapterId,
+    String? addChapterId,
   }) async {
     if (!state.appData.history.containsKey(bookId)) return;
     if (!state.appData.history[bookId]!.chapterHistory.containsKey(chapterId)) {
       return;
     }
 
+    _log.info('Removing from history: $bookId - $chapterId');
     emit(state.copyWith(
       appData: state.appData.copyWith(
         history: (state.appData.history)
@@ -148,7 +153,16 @@ class StorageCubit extends Cubit<StorageState> {
         ),
       ));
     }
-    await saveData();
+    if (addChapterId != null) {
+      await addToHistory(
+        bookId: bookId,
+        chapterId: addChapterId,
+        pageNumber: 1,
+        position: 0,
+      );
+    } else {
+      await saveData();
+    }
   }
 
   Future<void> saveData() async {
