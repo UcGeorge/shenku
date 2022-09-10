@@ -5,6 +5,10 @@ import '../../../constants/color.dart';
 import '../../../constants/fonts.dart';
 import '../../../data/models/book.dart';
 import '../../../logic/cubit/book_details_cubit.dart';
+import '../../../logic/cubit/navigator_cubit.dart';
+import '../../../logic/cubit/reading_cubit.dart';
+import '../../../logic/cubit/storage_cubit.dart';
+import '../../pages/chapter.dart';
 import '../image/multi_source_image.dart';
 import '../smooth_scroll/smooth_scroll.dart';
 import 'chapter_tile/chapter_tile.dart';
@@ -33,6 +37,7 @@ class BookDetailsView extends StatelessWidget {
                   url: state.book!.coverPicture!.url,
                   backgroundColor: thisWhite.withOpacity(.15),
                   fit: BoxFit.cover,
+                  useOldImageOnUrlChange: false,
                 ),
               ),
             ),
@@ -42,6 +47,7 @@ class BookDetailsView extends StatelessWidget {
   Expanded _buildName(BuildContext context, BookDetailsState state) {
     return Expanded(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -222,9 +228,111 @@ class BookDetailsView extends StatelessWidget {
               ...state.book!.chapters!.map((e) => ChapterItem(e, state.book!)),
             ];
 
+  ElevatedButton _buildResumeButton(BuildContext context,
+      BookDetailsState state, String chapterId, double offset) {
+    return ElevatedButton(
+      onPressed: () {
+        context.reader.readChapter(
+          state.book!,
+          chapterId,
+          offset,
+        );
+        context.navigator.goToCustomScaffold(
+          context,
+          scaffold: const ChapterView(),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+          side: BorderSide(
+            color: white.withOpacity(.8),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Text(
+        'Resume',
+        overflow: TextOverflow.ellipsis,
+        style: nunito.copyWith(
+          fontSize: 14,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  ElevatedButton _buildStartButton(
+      BuildContext context, BookDetailsState state) {
+    return ElevatedButton(
+      onPressed: () {
+        context.reader.readChapter(state.book!, state.book!.chapters!.last.id);
+        context.navigator.goToCustomScaffold(
+          context,
+          scaffold: const ChapterView(),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+          side: BorderSide(
+            color: white.withOpacity(.8),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Text(
+        'Start',
+        overflow: TextOverflow.ellipsis,
+        style: nunito.copyWith(
+          fontSize: 14,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  ElevatedButton _buildAddButton(BuildContext context, BookDetailsState state) {
+    return ElevatedButton(
+      onPressed: () => context.storageCubit.addToLibrary(state.book!),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: violet,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+      ),
+      child: Text(
+        'Add to Library',
+        overflow: TextOverflow.ellipsis,
+        style: nunito.copyWith(
+          fontSize: 14,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  ElevatedButton _buildRemoveButton(
+      BuildContext context, BookDetailsState state) {
+    return ElevatedButton(
+      onPressed: () => context.storageCubit.removeFromLibrary(state.book!),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        padding: EdgeInsets.zero,
+      ),
+      child: const Icon(Icons.delete_rounded),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    context.detailsController.getBookDetails(context);
     return BlocBuilder<BookDetailsCubit, BookDetailsState>(
       builder: (context, state) {
         return Column(
@@ -233,12 +341,68 @@ class BookDetailsView extends StatelessWidget {
             const DVCloseButton(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  _buildCoverPhoto(state),
-                  _buildName(context, state),
-                ],
+              child: SizedBox(
+                height: 200,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _buildCoverPhoto(state),
+                    Expanded(
+                      child: BlocBuilder<StorageCubit, StorageState>(
+                          builder: (context, storageState) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildName(context, state),
+                            const SizedBox(height: 2),
+                            Wrap(
+                              runSpacing: 4,
+                              spacing: 4,
+                              children: [
+                                if (!storageState.appData.library
+                                    .contains(state.book!))
+                                  _buildAddButton(context, state),
+                                if (storageState.appData.history
+                                        .containsKey(state.book!.id) &&
+                                    storageState.appData
+                                        .history[state.book!.id]!.chapterHistory
+                                        .containsKey(storageState
+                                            .appData
+                                            .history[state.book!.id]!
+                                            .lastReadChapterId))
+                                  _buildResumeButton(
+                                    context,
+                                    state,
+                                    storageState
+                                        .appData
+                                        .history[state.book!.id]!
+                                        .lastReadChapterId,
+                                    storageState
+                                        .appData
+                                        .history[state.book!.id]!
+                                        .chapterHistory[storageState
+                                            .appData
+                                            .history[state.book!.id]!
+                                            .lastReadChapterId]!
+                                        .position,
+                                  ),
+                                if (!storageState.appData.history
+                                        .containsKey(state.book!.id) &&
+                                    state.book!.chapters != null &&
+                                    state.book!.chapters!.isNotEmpty)
+                                  _buildStartButton(context, state),
+                                if (storageState.appData.library
+                                    .contains(state.book!))
+                                  _buildRemoveButton(context, state),
+                              ],
+                            )
+                          ],
+                        );
+                      }),
+                    ),
+                  ],
+                ),
               ),
             ),
             _buildChapterList(context, state),

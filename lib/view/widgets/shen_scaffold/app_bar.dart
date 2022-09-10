@@ -33,13 +33,15 @@ class _ShenAppBarState extends State<ShenAppBar> {
       });
     }
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        if (result == ConnectivityResult.none) {
-          isConnected = false;
-        } else {
-          isConnected = true;
-        }
-      });
+      if (mounted) {
+        setState(() {
+          if (result == ConnectivityResult.none) {
+            isConnected = false;
+          } else {
+            isConnected = true;
+          }
+        });
+      }
     });
   }
 

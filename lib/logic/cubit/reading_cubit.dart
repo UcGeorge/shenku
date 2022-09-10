@@ -17,14 +17,17 @@ final _log = Logger('reader_cubit');
 class ReadingCubit extends Cubit<ReadingState> {
   ReadingCubit() : super(ReadingState.init());
 
-  final ScrollController scrollController = ScrollController();
+  late ScrollController scrollController;
 
-  void readChapter(Book book, String chapterId) {
+  void readChapter(Book book, String chapterId, [double? offset]) {
+    _log.info(
+        'Reading chapter ${book.name} / ${book.chapters!.firstWhere((element) => element.id == chapterId).name}');
     emit(state.copyWith(
       book: book,
       chapterId: chapterId,
       loadedUnits: 0,
     ));
+    scrollController = ScrollController(initialScrollOffset: offset ?? 0);
   }
 
   void stopReading(BuildContext context) {
@@ -56,6 +59,8 @@ class ReadingCubit extends Cubit<ReadingState> {
     }
 
     if (chapter == state.chapter) {
+      _log.info(
+          'Got chapter details for ${state.book?.name} / ${state.chapter?.name}');
       emit(state.copyWith(
         book: book,
         chapterId: state.chapterId,

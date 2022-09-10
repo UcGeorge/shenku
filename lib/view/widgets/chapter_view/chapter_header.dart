@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shenku/constants/fonts.dart';
-import 'package:shenku/data/models/chapter.dart';
-import 'package:shenku/logic/cubit/status_bar_cubit.dart';
 
 import '../../../constants/color.dart';
+import '../../../constants/fonts.dart';
 import '../../../data/models/book.dart';
+import '../../../data/models/chapter.dart';
+import '../../../logic/cubit/status_bar_cubit.dart';
+import '../../../logic/cubit/storage_cubit.dart';
 import 'close_button.dart';
 
 class ChapterHeader extends StatefulWidget {
@@ -30,6 +31,16 @@ class _ChapterHeaderState extends State<ChapterHeader> {
     });
   }
 
+  void syncReadingData() {
+    context.storageCubit.addToHistory(
+      bookId: widget.book.id,
+      chapterId: widget.chapter.id,
+      pageNumber: 1,
+      position: 0,
+    );
+    context.statusBar.removerItem('chapter-load-progress');
+  }
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
@@ -53,10 +64,7 @@ class _ChapterHeaderState extends State<ChapterHeader> {
               ChapterCloseButton(
                 onTap: () => Future.delayed(
                   const Duration(milliseconds: 0),
-                  () {
-                    //TODO: Save state of books in library
-                    context.statusBar.removerItem('chapter-load-progress');
-                  },
+                  syncReadingData,
                 ),
                 enabled: true,
               ),

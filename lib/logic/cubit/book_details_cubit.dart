@@ -15,15 +15,21 @@ final _log = Logger('book_details_cubit');
 class BookDetailsCubit extends Cubit<BookDetailsState> {
   BookDetailsCubit() : super(BookDetailsState.init());
 
+  @override
+  void emit(BookDetailsState state) {
+    // _log.info(state);
+    super.emit(state);
+  }
+
   void showDetails(Book book) => emit(state.copyWith(book: book));
 
   void clearDetails() => emit(state.copyWith(book: null));
 
   Future<void> getBookDetails(BuildContext context) async {
-    _log.info('Getting book details for ${state.book?.name}');
     if (state.book == null) return;
     if (state.book!.hasCompleteData) return;
 
+    _log.info('Getting book details for ${state.book?.name}');
     Book book = state.book!;
     String source = book.source;
 

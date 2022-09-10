@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants/color.dart';
-import '../../../constants/fonts.dart';
 import '../../../data/models/book.dart';
 import '../../../data/models/chapter.dart';
 import '../../../logic/cubit/reading_cubit.dart';
+import '../../../logic/cubit/storage_cubit.dart';
 import 'nav_button/shen_nav_button.dart';
+import 'slider/slider.dart';
 
 class ChapterNavButtons extends StatefulWidget {
   const ChapterNavButtons({
@@ -19,7 +20,7 @@ class ChapterNavButtons extends StatefulWidget {
   final Book book;
   final Chapter chapter;
   final ScrollController chapterScrollController;
-  final Function(VoidCallback) onTap;
+  final Function(Future<dynamic> Function()) onTap;
 
   @override
   State<ChapterNavButtons> createState() => _ChapterNavButtonsState();
@@ -42,9 +43,9 @@ class _ChapterNavButtonsState extends State<ChapterNavButtons> {
 
   void updateState() => setState(() {});
 
-  void _toogleHover(PointerEvent e) {
+  void _toogleHover(bool value) {
     setState(() {
-      isHovering = !isHovering;
+      isHovering = value;
     });
   }
 
@@ -66,39 +67,10 @@ class _ChapterNavButtonsState extends State<ChapterNavButtons> {
         color: blueGrey,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            value.toInt().toString(),
-            overflow: TextOverflow.ellipsis,
-            style: nunito.copyWith(
-              fontSize: 12,
-              color: Colors.white,
-            ),
-          ),
-          Slider(
-            value: value.toDouble(),
-            min: 0,
-            max: chapterLength.toDouble(),
-            onChanged: (value) {
-              final controller = widget.chapterScrollController;
-              controller.jumpTo((value / chapterLength) *
-                  controller.position.maxScrollExtent);
-            },
-            thumbColor: violet,
-            activeColor: violet.withOpacity(.3),
-            inactiveColor: white.withOpacity(.3),
-          ),
-          Text(
-            '$chapterLength',
-            overflow: TextOverflow.ellipsis,
-            style: nunito.copyWith(
-              fontSize: 12,
-              color: Colors.white,
-            ),
-          ),
-        ],
+      child: ChapterSlider(
+        value: value,
+        chapterLength: chapterLength,
+        widget: widget,
       ),
     );
   }
@@ -106,8 +78,8 @@ class _ChapterNavButtonsState extends State<ChapterNavButtons> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: _toogleHover,
-      onExit: _toogleHover,
+      onEnter: (_) => _toogleHover(true),
+      onExit: (_) => _toogleHover(false),
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 100),
         opacity: isHovering ? 1 : .15,
@@ -119,14 +91,20 @@ class _ChapterNavButtonsState extends State<ChapterNavButtons> {
               ShenChapterNavButton(
                 forward: false,
                 enabled: widget.book.chapters!.last != widget.chapter,
-                onTap: () => widget.onTap(() {
+                onTap: () => widget.onTap(() async {
+                  final nextChapterId = widget
+                      .book
+                      .chapters![
+                          widget.book.chapters!.indexOf(widget.chapter) + 1]
+                      .id;
+                  await context.storageCubit.removeFromHistory(
+                    bookId: widget.book.id,
+                    chapterId: widget.chapter.id,
+                    addChapterId: nextChapterId,
+                  );
                   context.reader.readChapter(
                     widget.book,
-                    widget
-                        .book
-                        .chapters![
-                            widget.book.chapters!.indexOf(widget.chapter) + 1]
-                        .id,
+                    nextChapterId,
                   );
                 }),
               ),
@@ -134,14 +112,20 @@ class _ChapterNavButtonsState extends State<ChapterNavButtons> {
               ShenChapterNavButton(
                 forward: true,
                 enabled: widget.book.chapters!.first != widget.chapter,
-                onTap: () => widget.onTap(() {
+                onTap: () => widget.onTap(() async {
+                  final nextChapterId = widget
+                      .book
+                      .chapters![
+                          widget.book.chapters!.indexOf(widget.chapter) - 1]
+                      .id;
+                  await context.storageCubit.removeFromHistory(
+                    bookId: widget.book.id,
+                    chapterId: widget.chapter.id,
+                    addChapterId: nextChapterId,
+                  );
                   context.reader.readChapter(
                     widget.book,
-                    widget
-                        .book
-                        .chapters![
-                            widget.book.chapters!.indexOf(widget.chapter) - 1]
-                        .id,
+                    nextChapterId,
                   );
                 }),
               ),
