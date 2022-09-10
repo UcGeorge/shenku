@@ -99,7 +99,6 @@ class _ChapterViewState extends State<ChapterView> {
                 child: ListView.builder(
                   // shrinkWrap: true,
                   controller: context.reader.scrollController,
-                  cacheExtent: 999999999999999,
                   itemCount: state.chapter!.contentLength(state.book!.type),
                   itemBuilder: (_, i) {
                     var type = state.book!.type;
@@ -150,9 +149,11 @@ class _ChapterViewState extends State<ChapterView> {
 
   @override
   Widget build(BuildContext context) {
-    context.reader.getChapterDetails(context);
     return BlocBuilder<ReadingCubit, ReadingState>(
       builder: (context, state) {
+        context.reader.getChapterDetails(context);
+        _log.info(
+            'Building chapter: ${state.book?.name}/${state.chapter?.name}');
         return WindowBorder(
           color: Colors.black,
           child: Material(
@@ -162,6 +163,7 @@ class _ChapterViewState extends State<ChapterView> {
                 SizedBox(
                   height: screenSize(context).height,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(child: _buildChapterContent(context, state)),
                       const ShenStatusBar(),
@@ -177,11 +179,11 @@ class _ChapterViewState extends State<ChapterView> {
                       book: state.book!,
                       chapter: state.chapter!,
                       chapterScrollController: context.reader.scrollController,
-                      onTap: (callback) {
+                      onTap: (callback) async {
                         setState(() => loadedUnits.clear());
                         context.reader.scrollController.jumpTo(0);
                         context.statusBar.removerItem('chapter-load-progress');
-                        callback.call();
+                        await callback.call();
                       },
                     ),
                   ),
