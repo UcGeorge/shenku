@@ -1,12 +1,18 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shenku/view/widgets/status_bar/shen_status_bar.dart';
+import 'package:shenku/logic/events/shortcuts/navigation.dart';
 
 import '../../../constants/color.dart';
 import '../../../logic/cubit/book_details_cubit.dart';
+import '../../../logic/cubit/navigator_cubit.dart';
+import '../../../logic/events/actions/dispatcher.dart';
+import '../../../logic/events/actions/navigation.dart';
+import '../../../logic/events/intents/shen_scaffold.dart';
+import '../../../logic/events/shortcuts/logging_shortcut_manager.dart';
 import '../../../logic/services/general.dart';
 import '../book_details/book_details.dart';
+import '../status_bar/shen_status_bar.dart';
 import 'app_bar.dart';
 import 'drawer.dart';
 import 'window_buttons.dart';
@@ -111,16 +117,36 @@ class ShenScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WindowBorder(
-      color: dark,
-      child: Material(
-        color: dark,
-        child: Column(
-          children: [
-            _buildAppTitleBar(),
-            _buildMainAppScene(),
-            const ShenStatusBar(),
-          ],
+    return LoggedShortcuts(
+      shortcuts: shenScaffoldNavigation,
+      child: Actions(
+        dispatcher: LoggingActionDispatcher(),
+        actions: <Type, Action<Intent>>{
+          BackIntent: GoBackAction(
+            context,
+            context.read<NavigationCubit>(),
+          ),
+          FowardIntent: GoFowardAction(
+            context,
+            context.read<NavigationCubit>(),
+          ),
+        },
+        child: Builder(
+          builder: (context) {
+            return WindowBorder(
+              color: dark,
+              child: Material(
+                color: dark,
+                child: Column(
+                  children: [
+                    _buildAppTitleBar(),
+                    _buildMainAppScene(),
+                    const ShenStatusBar(),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

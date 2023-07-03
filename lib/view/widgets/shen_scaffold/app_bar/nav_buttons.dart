@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import '../../../../logic/cubit/navigator_cubit.dart';
+import '../../../../logic/events/intents/shen_scaffold.dart';
 import 'shen_nav_button.dart';
+
+final _log = Logger('nav_buttons');
 
 class NavButtons extends StatelessWidget {
   const NavButtons({
@@ -18,16 +22,16 @@ class NavButtons extends StatelessWidget {
         ShenNavButton(
           state: state,
           enabled: state.routeStack.length > 1 || state.isStateless,
-          onTap: () => state.isStateless
-              ? context.navigator.goBackwardWithoutState(context)
-              : context.navigator.goBackward(context),
+          onTap: () =>
+              Actions.maybeInvoke<BackIntent>(context, const BackIntent()),
         ),
         const SizedBox(width: 4),
         ShenNavButton(
           state: state,
           quarterTurns: 2,
           enabled: state.pushStack.isNotEmpty && !state.isStateless,
-          onTap: () => context.navigator.goFoward(context),
+          onTap: () =>
+              Actions.maybeInvoke<FowardIntent>(context, const FowardIntent()),
         )
       ],
     );
